@@ -8,9 +8,11 @@
  * See the LICENSE file in the root directory for details.
  */
 
-package drift.jvm.emitters
+package drift.jvm.emitters.statements
 
 import drift.hir.HIRFunction
+import drift.jvm.emitters.Emitter
+import drift.jvm.emitters.TempValues
 import drift.jvm.emitters.opcodes.OpcodesPlus.ACC_NOT_STATIC
 import drift.jvm.emitters.sugar.then
 import drift.jvm.emitters.types.helpers.TypeConverter.formatTypes
