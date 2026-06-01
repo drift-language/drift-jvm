@@ -13,5 +13,5 @@ package drift.jvmruntime.functions
 
 interface F3<P1, P2, P3, R> {
 
-    fun apply(p1: P1, p2: P2, p3: P3) : R
+    operator fun invoke(p1: P1, p2: P2, p3: P3) : R
 }
