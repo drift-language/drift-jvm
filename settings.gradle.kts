@@ -4,3 +4,4 @@ plugins {
 rootProject.name = "drift-jvm"
 
 includeBuild("../drift")
+include("runtime")
