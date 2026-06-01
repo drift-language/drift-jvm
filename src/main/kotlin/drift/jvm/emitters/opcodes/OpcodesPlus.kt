@@ -24,4 +24,11 @@ object OpcodesPlus {
      * @see org.objectweb.asm.Opcodes.ACC_STATIC
      */
     const val ACC_NOT_STATIC = 0x0000
+
+
+    const val BIPUSH_MIN = -128
+    const val BIPUSH_MAX = 127
+
+    const val SIPUSH_MIN = -32768
+    const val SIPUSH_MAX = 32767
 }
