@@ -10,21 +10,17 @@
 
 package drift.jvm.emitters.expressions
 
-import drift.hir.HIRClassType
-import drift.hir.HIROptionalType
-import drift.hir.HIRPrimitiveType
-import drift.hir.HIRUnionType
-import drift.hir.HIRVariableRef
-import drift.hir.PrimitiveKind
+import drift.hir.*
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.InnerEmitter
 import org.objectweb.asm.Opcodes.*
 
 
 /**
+ * This inner emitter handles variable reference expressions.
  *
- * 
  * @author Jonathan (GitHub: belicfr)
+ * @see HIRVariableRef
  */
 class VariableReferenceEmitter(
     private val context: EmitContext) : InnerEmitter<HIRVariableRef> {
@@ -52,6 +48,18 @@ class VariableReferenceEmitter(
         }
     }
 
+    /**
+     * Attempt retrieving a `*LOAD` [org.objectweb.asm.Opcodes]
+     * from a [PrimitiveKind] case.
+     *
+     * @param primitiveKind Primitive type used to retrieve
+     *                      the [org.objectweb.asm.Opcodes].
+     * @return [org.objectweb.asm.Opcodes] value if found.
+     *         If no one satisfies the provided [PrimitiveKind],
+     *         an exception is thrown.
+     * @see PrimitiveKind
+     * @see org.objectweb.asm.Opcodes
+     */
     private fun getLoadOpcodeFromPrimitive(primitiveKind: PrimitiveKind) =
         when (primitiveKind) {
             PrimitiveKind.BOOL,

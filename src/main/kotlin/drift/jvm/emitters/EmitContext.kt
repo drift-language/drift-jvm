@@ -14,7 +14,8 @@ import org.objectweb.asm.MethodVisitor
 
 
 /**
- *
+ * Context provided on each [Emitter] which needs
+ * the current [MethodVisitor] and [SlotsManager] instances.
  * 
  * @author Jonathan (GitHub: belicfr)
  */
