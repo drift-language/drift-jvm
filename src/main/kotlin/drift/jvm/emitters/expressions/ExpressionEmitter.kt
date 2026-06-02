@@ -10,6 +10,7 @@
 
 package drift.jvm.emitters.expressions
 
+import drift.hir.HIRBinaryOp
 import drift.hir.HIRExpression
 import drift.hir.HIRLiteral
 import drift.hir.HIRVariableRef
@@ -20,9 +21,12 @@ import org.objectweb.asm.MethodVisitor
 
 
 /**
+ * This inner emitter handles expressions.
+ * Regarding of the expression's kind, this emitter
+ * dispatches to a dedicated inner emitter.
  *
- * 
  * @author Jonathan (GitHub: belicfr)
+ * @see HIRExpression
  */
 class ExpressionEmitter(
     private val context: EmitContext)
@@ -40,8 +44,11 @@ class ExpressionEmitter(
                     .emit(node)
             }
 
+            is HIRBinaryOp -> {
+                BinaryOperationEmitter(context)
+                    .emit(node)
+            }
 
-            // TODO: other expression kinds
 
             else -> error("Unexpected expression kind")
         }

@@ -23,9 +23,10 @@ import org.objectweb.asm.Opcodes.*
 
 
 /**
- *
+ * This inner emitter handles literal expressions.
  * 
  * @author Jonathan (GitHub: belicfr)
+ * @see HIRLiteral
  */
 class LiteralEmitter(
     private val context: EmitContext)
@@ -39,12 +40,21 @@ class LiteralEmitter(
         }
     }
 
+    /**
+     * Handle a primitive value from a literal expression
+     * using native JVM primitive methods and opcodes.
+     */
     private fun emitPrimitive(node: HIRLiteral) {
         if (node.value == null) {
-            context.methodVisitor.visitInsn(ACONST_NULL)
+            context
+                .methodVisitor
+                .visitInsn(ACONST_NULL)
 
             return
         }
+
+        if (node.type !is HIRPrimitiveType)
+            error("Unexpected primitive type")
 
         when ((node.type as HIRPrimitiveType).kind) {
             PrimitiveKind.BOOL -> {
@@ -52,26 +62,46 @@ class LiteralEmitter(
                     if (node.value as Boolean) ICONST_1
                     else ICONST_0
 
-                context.methodVisitor.visitInsn(opcode)
+                context
+                    .methodVisitor
+                    .visitInsn(opcode)
             }
-            PrimitiveKind.INT64 ->
-                context.methodVisitor.visitLdcInsn(node.value as Long)
+            PrimitiveKind.INT64 -> {
+                context
+                    .methodVisitor
+                    .visitLdcInsn(node.value as Long)
+            }
             PrimitiveKind.INT, PrimitiveKind.UINT ->
                 when (val value: Int = node.value as Int) {
-                    in ICONST_M1..ICONST_5 ->
-                        context.methodVisitor.visitInsn(ICONST_0 + value)
-                    in BIPUSH_MIN..BIPUSH_MAX ->
-                        context.methodVisitor.visitIntInsn(BIPUSH, value)
-                    in SIPUSH_MIN..SIPUSH_MAX ->
-                        context.methodVisitor.visitIntInsn(SIPUSH, value)
+                    in ICONST_M1..ICONST_5 -> {
+                        context
+                            .methodVisitor
+                            .visitInsn(ICONST_0 + value)
+                    }
+                    in BIPUSH_MIN..BIPUSH_MAX -> {
+                        context
+                            .methodVisitor
+                            .visitIntInsn(BIPUSH, value)
+                    }
+                    in SIPUSH_MIN..SIPUSH_MAX -> {
+                        context
+                            .methodVisitor
+                            .visitIntInsn(SIPUSH, value)
+                    }
 
                     else ->
                         context.methodVisitor.visitLdcInsn(value)
                 }
-            PrimitiveKind.STRING ->
-                context.methodVisitor.visitLdcInsn(node.value as String)
-            PrimitiveKind.NULL ->
-                context.methodVisitor.visitInsn(ACONST_NULL)
+            PrimitiveKind.STRING -> {
+                context
+                    .methodVisitor
+                    .visitLdcInsn(node.value as String)
+            }
+            PrimitiveKind.NULL -> {
+                context
+                    .methodVisitor
+                    .visitInsn(ACONST_NULL)
+            }
             PrimitiveKind.VOID ->
                 error("VOID cannot be a literal")
         }
