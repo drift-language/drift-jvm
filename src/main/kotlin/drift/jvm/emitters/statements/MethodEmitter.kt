@@ -11,7 +11,10 @@
 package drift.jvm.emitters.statements
 
 import drift.hir.HIRFunction
+import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.Emitter
+import drift.jvm.emitters.InnerEmitter
+import drift.jvm.emitters.SlotsManager
 import drift.jvm.emitters.TempValues
 import drift.jvm.emitters.opcodes.OpcodesPlus.ACC_NOT_STATIC
 import drift.jvm.emitters.sugar.then
@@ -28,7 +31,7 @@ import org.objectweb.asm.Opcodes.ACC_STATIC
  */
 class MethodEmitter(
     private val classWriter: ClassWriter)
-    : Emitter<HIRFunction, Unit> {
+    : InnerEmitter<HIRFunction> {
 
     override fun emit(node: HIRFunction) {
         val access = TempValues.visibility then
@@ -47,6 +50,10 @@ class MethodEmitter(
             formatTypes(inputTypes, outputType),
             TempValues.signature,
             TempValues.exceptions)
+
+        val context = EmitContext(
+            methodVisitor = methodVisitor,
+            slotsManager = SlotsManager())
 
         with(methodVisitor) {
             visitCode()

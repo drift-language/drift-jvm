@@ -12,6 +12,7 @@ package drift.jvm.emitters.statements
 
 import drift.hir.HIRField
 import drift.jvm.emitters.Emitter
+import drift.jvm.emitters.InnerEmitter
 import drift.jvm.emitters.TempValues
 import drift.jvm.emitters.opcodes.OpcodesPlus.ACC_NOT_STATIC
 import drift.jvm.emitters.sugar.then
@@ -28,7 +29,7 @@ import org.objectweb.asm.Opcodes.ACC_STATIC
  */
 class FieldEmitter(
     private val classWriter: ClassWriter)
-    : Emitter<HIRField, Unit> {
+    : InnerEmitter<HIRField> {
 
     override fun emit(node: HIRField) {
         val access = TempValues.visibility then
