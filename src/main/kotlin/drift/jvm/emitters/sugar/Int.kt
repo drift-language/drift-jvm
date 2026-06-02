@@ -28,8 +28,8 @@ package drift.jvm.emitters.sugar
  *
  * **Important!**
  * This infix should not be used in another case
- * than [org.objectweb.asm.Opcodes] union.
- * Its behavior could be changed at anytime.
+ * than a [org.objectweb.asm.Opcodes] union.
+ * Its behavior could be changed at any time.
  * 
  * @author Jonathan (GitHub: belicfr)
  */
