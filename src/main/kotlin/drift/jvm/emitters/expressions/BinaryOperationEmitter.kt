@@ -18,6 +18,7 @@ import drift.hir.HIRType
 import drift.hir.PrimitiveKind
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.InnerEmitter
+import drift.jvm.emitters.expressions.helpers.OperationHelper.emitOperand
 import org.objectweb.asm.Label
 import org.objectweb.asm.Opcodes.*
 
@@ -82,38 +83,6 @@ class BinaryOperationEmitter(
             BinaryOperator.AND,
             BinaryOperator.OR)
 
-    /**
-     * Emit the provided operand.
-     * If the node's type is a 32-bits integer (signed or not),
-     * and the operand's one a 64-bits integer, the operand stack
-     * value is widened from integer to long using [I2L] opcode.
-     *
-     * @param expressionEmitter Expression emitter instance used
-     *                          to emit the operand.
-     * @param operand The operand to emit.
-     * @param nodeType The type expected for the binary operation.
-     */
-    private fun emitOperand(
-        expressionEmitter: ExpressionEmitter,
-        operand: HIRExpression,
-        nodeType: HIRType) {
-
-        expressionEmitter.emit(operand)
-
-        val isOperand32BitsInteger =
-            operand.type == HIRPrimitiveType(PrimitiveKind.INT) ||
-                    operand.type == HIRPrimitiveType(PrimitiveKind.UINT)
-
-        val isOperationExpectedTypeLong =
-            nodeType == HIRPrimitiveType(PrimitiveKind.INT64)
-
-        if (isOperand32BitsInteger && isOperationExpectedTypeLong) {
-            context.methodVisitor.visitInsn(I2L)
-        } else if (operand.type != nodeType) {
-            error("Unsupported operation, incompatible types")
-        }
-    }
-
 
     /**
      * Inner emitter dedicated to all arithmetic binary operations.
@@ -138,11 +107,13 @@ class BinaryOperationEmitter(
             val expressionEmitter = ExpressionEmitter(context)
 
             emitOperand(
+                context.methodVisitor,
                 expressionEmitter,
                 node.left,
                 node.type)
 
             emitOperand(
+                context.methodVisitor,
                 expressionEmitter,
                 node.right,
                 node.type)
@@ -238,11 +209,13 @@ class BinaryOperationEmitter(
             val expressionEmitter = ExpressionEmitter(context)
 
             emitOperand(
+                context.methodVisitor,
                 expressionEmitter,
                 node.left,
                 node.type)
 
             emitOperand(
+                context.methodVisitor,
                 expressionEmitter,
                 node.right,
                 node.type)
@@ -299,6 +272,7 @@ class BinaryOperationEmitter(
                 val endLabel = Label()
 
                 emitOperand(
+                    context.methodVisitor,
                     expressionEmitter,
                     node.left,
                     node.type)
@@ -308,6 +282,7 @@ class BinaryOperationEmitter(
                 //  jump to the false branch label.
 
                 emitOperand(
+                    context.methodVisitor,
                     expressionEmitter,
                     node.right,
                     node.type)
@@ -339,33 +314,35 @@ class BinaryOperationEmitter(
                 val endLabel = Label()
 
                 emitOperand(
+                    context.methodVisitor,
                     expressionEmitter,
                     node.left,
                     node.type)
 
                 visitJumpInsn(IFNE, trueLabel)
                 // NOTE: If the left operand is TRUE (!= 0),
-                //  jump to the false branch label.
+                //  jump to the true branch label.
 
                 emitOperand(
+                    context.methodVisitor,
                     expressionEmitter,
                     node.right,
                     node.type)
 
                 visitJumpInsn(IFNE, trueLabel)
                 // NOTE: If the right operand is TRUE (!= 0),
-                //  jump to the false branch label.
+                //  jump to the true branch label.
 
                 visitInsn(ICONST_0)
                 // NOTE: If no one jump is done previously,
-                //  put '1' (TRUE) into the stack.
+                //  put '0' (FALSE) into the stack.
 
                 visitJumpInsn(GOTO, endLabel)
 
                 visitLabel(trueLabel)
                 visitInsn(ICONST_1)
-                // NOTE: If the false branch label is reached,
-                //  put '0' (FALSE) into the stack.
+                // NOTE: If the true branch label is reached,
+                //  put '1' (TRUE) into the stack.
 
                 visitLabel(endLabel)
             }
