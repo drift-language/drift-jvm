@@ -13,6 +13,8 @@ package drift.jvm.emitters.statements
 import drift.hir.HIRClass
 import drift.jvm.emitters.Emitter
 import drift.jvm.emitters.TempValues
+import drift.jvm.emitters.types.helpers.ClassHelper
+import drift.jvm.emitters.types.helpers.ClassHelper.getInternalClassName
 import org.objectweb.asm.ClassWriter
 
 
@@ -45,9 +47,7 @@ class ClassEmitter(
         //  So an empty array is used to represent no interfaces.
 
 
-        val name =
-            if (namespace.isEmpty()) node.name
-            else "$namespace/${node.name}"
+        val name = getInternalClassName(namespace, node.name)
 
         classWriter.visit(
             Emitter.OPCODE_VERSION,
