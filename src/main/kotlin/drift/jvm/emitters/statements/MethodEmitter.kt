@@ -14,6 +14,7 @@ import drift.hir.HIRFunction
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.Emitter
 import drift.jvm.emitters.InnerEmitter
+import drift.jvm.emitters.NodesManager
 import drift.jvm.emitters.SlotsManager
 import drift.jvm.emitters.TempValues
 import drift.jvm.emitters.opcodes.OpcodesPlus.ACC_NOT_STATIC
@@ -53,7 +54,8 @@ class MethodEmitter(
 
         val context = EmitContext(
             methodVisitor = methodVisitor,
-            slotsManager = SlotsManager())
+            slotsManager = SlotsManager(),
+            nodesManager = NodesManager())
 
         with(methodVisitor) {
             visitCode()
