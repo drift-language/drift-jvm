@@ -19,8 +19,21 @@ package drift.jvm.emitters
  */
 class SlotsManager {
 
-    private val slotByHirId = mapOf<Int, Int>()
+    private val slotByHirId = mutableMapOf<Int, Int>()
 
 
     fun get(hirId: Int) = slotByHirId[hirId]
+
+    fun has(hirId: Int) = get(hirId) != null
+
+    fun set(hirId: Int, slotIdx: Int) {
+        slotByHirId[hirId] = slotIdx
+    }
+
+    fun remove(hirId: Int) {
+        if (!has(hirId))
+            error("Unknown slot registration")
+
+        slotByHirId.remove(hirId)
+    }
 }
