@@ -49,6 +49,10 @@ class ExpressionEmitter(
                     .emit(node)
             }
 
+            is HIRUnaryOp -> {
+                UnaryOperationEmitter(context)
+                    .emit(node)
+            }
 
             else -> error("Unexpected expression kind")
         }
