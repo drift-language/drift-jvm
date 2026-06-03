@@ -10,16 +10,19 @@
 
 package drift.jvm.emitters
 
+import drift.jvm.emitters.managers.NodesManager
+import drift.jvm.emitters.managers.SlotsManager
 import org.objectweb.asm.MethodVisitor
 
 
 /**
  * Context provided on each [Emitter] which needs
- * the current [MethodVisitor] and [SlotsManager] instances.
+ * the current [MethodVisitor] and [drift.jvm.emitters.managers.SlotsManager] instances.
  * 
  * @author Jonathan (GitHub: belicfr)
  */
 data class EmitContext(
     val methodVisitor: MethodVisitor,
     val slotsManager: SlotsManager,
-    val nodesManager: NodesManager)
+    val nodesManager: NodesManager
+)

@@ -12,10 +12,9 @@ package drift.jvm.emitters.statements
 
 import drift.hir.HIRFunction
 import drift.jvm.emitters.EmitContext
-import drift.jvm.emitters.Emitter
 import drift.jvm.emitters.InnerEmitter
-import drift.jvm.emitters.NodesManager
-import drift.jvm.emitters.SlotsManager
+import drift.jvm.emitters.managers.NodesManager
+import drift.jvm.emitters.managers.SlotsManager
 import drift.jvm.emitters.TempValues
 import drift.jvm.emitters.opcodes.OpcodesPlus.ACC_NOT_STATIC
 import drift.jvm.emitters.sugar.then
