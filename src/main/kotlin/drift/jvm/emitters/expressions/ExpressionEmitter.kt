@@ -11,13 +11,13 @@
 package drift.jvm.emitters.expressions
 
 import drift.hir.HIRBinaryOp
+import drift.hir.HIRCall
 import drift.hir.HIRExpression
 import drift.hir.HIRLiteral
+import drift.hir.HIRUnaryOp
 import drift.hir.HIRVariableRef
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.InnerEmitter
-import drift.jvm.emitters.SlotsManager
-import org.objectweb.asm.MethodVisitor
 
 
 /**
@@ -53,6 +53,12 @@ class ExpressionEmitter(
                 UnaryOperationEmitter(context)
                     .emit(node)
             }
+
+            is HIRCall -> {
+                CallEmitter(context)
+                    .emit(node)
+            }
+
 
             else -> error("Unexpected expression kind")
         }

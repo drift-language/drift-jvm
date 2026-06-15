@@ -1,0 +1,195 @@
+/*
+ * Drift Programming Language
+ * Drift JVM Backend
+ *
+ * Copyright (c) 2026. Jonathan (GitHub: belicfr)
+ *
+ * This source code is licensed under the MIT License.
+ * See the LICENSE file in the root directory for details.
+ */
+
+package drift.jvm.emitters.expressions
+
+import drift.hir.*
+import drift.jvm.emitters.EmitContext
+import drift.jvm.emitters.InnerEmitter
+import drift.jvm.emitters.conventions.helpers.NamingHelper.formatClassName
+import drift.jvm.emitters.types.helpers.ClassHelper.getInternalClassName
+import drift.jvm.emitters.types.helpers.TypeConverter
+import drift.jvm.emitters.types.helpers.TypeConverter.formatTypes
+import language.LangInfo.NAMESPACE_SEPARATOR
+import org.objectweb.asm.Opcodes.*
+
+
+/**
+ *
+ * 
+ * @author Jonathan (GitHub: belicfr)
+ */
+class CallEmitter(
+    private val namespace: String,
+    private val context: EmitContext) : InnerEmitter<HIRCall> {
+
+    override fun emit(node: HIRCall) {
+        when (node.callee) {
+            is HIRVariableRef   -> emitFromVariableReference(node)
+            is HIRMethodAccess  -> emitMethodCall(node)
+
+            else                -> error("Unexpected callee")
+        }
+    }
+
+    private fun emitFromVariableReference(node: HIRCall) {
+        val callee = node.callee as HIRVariableRef
+        val calleeDefHirId = callee.definitionHirId
+            ?: return
+
+        val reference = context
+            .nodesManager
+            .get(calleeDefHirId)
+            ?: error("Unknown callee")
+
+        when (reference) {
+            is HIRClass     -> emitConstructorCall(node, reference)
+            is HIRFunction  -> emitFunctionCall(node, reference)
+
+            else            -> error("Unexpected reference")
+        }
+    }
+
+    private fun emitConstructorCall(call: HIRCall, ref: HIRClass) {
+        val constructor = "<init>"
+
+        val className = getInternalClassName(
+            namespace,
+            ref.name)
+
+        val ctorHook = ref
+            .hooks
+            .firstOrNull { it.name == "init" }
+            ?: error("Invalid class structure: a class must have a constructor")
+        val ctorParameterTypes = ctorHook
+            .parameters
+            .map { it.type }
+
+        val ctorDescriptor = formatTypes(
+            input = ctorParameterTypes,
+            output = HIRPrimitiveType(PrimitiveKind.VOID))
+
+        val isInterface = false
+
+        with(context.methodVisitor) {
+            visitTypeInsn(NEW, className)
+
+            visitInsn(DUP)
+
+            emitArguments(call.arguments)
+
+            visitMethodInsn(
+                INVOKESPECIAL,
+                className,
+                constructor,
+                ctorDescriptor,
+                isInterface)
+        }
+    }
+
+    private fun emitFunctionCall(call: HIRCall, ref: HIRFunction) {
+        val owner = formatClassName(namespace, ref.hirId, ref.name)
+
+        val invokeFn = "invoke"
+
+        val parameterTypes = ref
+            .parameters
+            .map { it.type }
+
+        val descriptor = formatTypes(
+            input = parameterTypes,
+            output = ref.returnType)
+
+        val isInterface = false
+
+        emitArguments(call.arguments)
+
+        context.methodVisitor.visitMethodInsn(
+            INVOKESTATIC,
+            owner,
+            invokeFn,
+            descriptor,
+            isInterface)
+    }
+
+    private fun emitMethodCall(call: HIRCall) {
+        fun handleStaticMethod(callee: HIRStaticMethodAccess) {
+            val owner = callee.receiverClassName
+            val name = callee.memberName
+            val method = (context
+                .nodesManager
+                .get(callee.definitionHirId)
+                ?: error("Undefined method in static context")) as? HIRFunction
+                ?: error("Unexpected structure")
+            val descriptor = formatTypes(
+                input = method.parameters.map { it.type },
+                output = method.returnType)
+            val isInterface = false
+
+            emitArguments(call.arguments)
+
+            context.methodVisitor.visitMethodInsn(
+                INVOKESTATIC,
+                owner,
+                name,
+                descriptor,
+                isInterface)
+        }
+
+        fun handleInstanceMethod(callee: HIRInstanceMethodAccess) {
+            ExpressionEmitter(context)
+                .emit(callee.receiver)
+
+            val isOverridable = false
+            val opcode =
+                if (isOverridable) INVOKEVIRTUAL
+                else INVOKESPECIAL
+            val owner = callee.receiverClassName
+            val name = callee.memberName
+            val method = (context
+                .nodesManager
+                .get(callee.definitionHirId)
+                ?: error("Undefined method in static context")) as? HIRFunction
+                ?: error("Unexpected structure")
+            val descriptor = formatTypes(
+                input = method.parameters.map { it.type },
+                output = method.returnType)
+            val isInterface = false
+
+            emitArguments(call.arguments)
+
+            context.methodVisitor.visitMethodInsn(
+                opcode,
+                owner,
+                name,
+                descriptor,
+                isInterface)
+            // NOTE: opcode should be chosen regarding method context:
+            //  - overridable       => INVOKEVIRTUAL = runtime
+            //  - non overridable   => INVOKESPECIAL = compile-time
+        }
+
+
+        when (val callee = call.callee) {
+            is HIRStaticMethodAccess    -> handleStaticMethod(callee)
+            is HIRInstanceMethodAccess  -> handleInstanceMethod(callee)
+
+            else                        -> error("Unexpected callee")
+        }
+    }
+
+    private fun emitArguments(args: Collection<HIRArgument>) {
+        val expressionEmitter = ExpressionEmitter(context)
+
+        for (argument in args) with(argument) {
+            expressionEmitter.emit(value)
+        }
+    }
+}
