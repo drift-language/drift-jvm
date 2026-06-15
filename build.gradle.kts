@@ -14,6 +14,7 @@ dependencies {
     testImplementation(kotlin("test"))
 
     implementation("fr.belic.drift:drift-hir:2026.0")
+    implementation("fr.belic.drift:drift-common:2026.0")
 
     implementation("org.ow2.asm:asm:9.7")
     implementation("org.ow2.asm:asm-commons:9.7")
