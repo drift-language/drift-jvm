@@ -21,6 +21,11 @@ import org.objectweb.asm.Opcodes
  * Some emitters will return [ByteArray] to make `.class` files.
  * Others may change states without returning anything.
  *
+ * @param NODE Type of HIRNode to emit.
+ * @param R Return type of the emission process.
+ *         It depends on how each emitting logic is implemented,
+ *         which could be a [ByteArray], a string, etc.
+ *
  * @author Jonathan (GitHub: belicfr)
  */
 interface Emitter<NODE: HIRNode, R> {
