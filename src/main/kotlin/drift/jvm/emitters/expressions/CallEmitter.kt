@@ -119,17 +119,48 @@ class CallEmitter(
     }
 
     private fun emitMethodCall(call: HIRCall) {
+        /**
+         * Attempt to retrieve the [HIRFunction] object from its definition
+         * HIR ID.
+         *
+         * If the retrieved object is not a [HIRFunction], an error is thrown;
+         * same if none object is found using the provided ID.
+         *
+         * @param defHirId The definition HIR ID of the function to retrieve.
+         * @return The [HIRFunction] object.
+         */
+        fun getMethodFromContextOrThrow(defHirId: Int) : HIRFunction {
+            return (context
+                .nodesManager
+                .get(defHirId)
+                ?: error("Undefined method in static context")) as? HIRFunction
+                ?: error("Unexpected structure")
+        }
+
+        /**
+         * Compute the method's descriptor by taking its parameter types
+         * and return type into account.
+         *
+         * @param method The [HIRFunction] to compute the descriptor from.
+         * @return The method's descriptor.
+         */
+        fun getMethodDescriptor(method: HIRFunction) : String {
+            return formatTypes(
+                input = method.parameters.map { it.type },
+                output = method.returnType)
+        }
+
+        /**
+         * Handle a static method call. Define method information,
+         * push arguments on the stack, and invoke the method.
+         *
+         * @param callee The [HIRStaticMethodAccess] to emit from.
+         */
         fun handleStaticMethod(callee: HIRStaticMethodAccess) {
             val owner = callee.receiverClassName
             val name = callee.memberName
-            val method = (context
-                .nodesManager
-                .get(callee.definitionHirId)
-                ?: error("Undefined method in static context")) as? HIRFunction
-                ?: error("Unexpected structure")
-            val descriptor = formatTypes(
-                input = method.parameters.map { it.type },
-                output = method.returnType)
+            val method = getMethodFromContextOrThrow(callee.definitionHirId)
+            val descriptor = getMethodDescriptor(method)
             val isInterface = false
 
             emitArguments(call.arguments)
@@ -142,8 +173,15 @@ class CallEmitter(
                 isInterface)
         }
 
+        /**
+         * Handle an instance method call. Emit its receiver,
+         * define method information, push arguments on the stack,
+         * and invoke the method.
+         *
+         * @param callee The [HIRInstanceMethodAccess] to emit from.
+         */
         fun handleInstanceMethod(callee: HIRInstanceMethodAccess) {
-            ExpressionEmitter(context)
+            ExpressionEmitter(namespace, context)
                 .emit(callee.receiver)
 
             val isOverridable = false
@@ -152,14 +190,8 @@ class CallEmitter(
                 else INVOKESPECIAL
             val owner = callee.receiverClassName
             val name = callee.memberName
-            val method = (context
-                .nodesManager
-                .get(callee.definitionHirId)
-                ?: error("Undefined method in static context")) as? HIRFunction
-                ?: error("Unexpected structure")
-            val descriptor = formatTypes(
-                input = method.parameters.map { it.type },
-                output = method.returnType)
+            val method = getMethodFromContextOrThrow(callee.definitionHirId)
+            val descriptor = getMethodDescriptor(method)
             val isInterface = false
 
             emitArguments(call.arguments)
@@ -185,7 +217,7 @@ class CallEmitter(
     }
 
     private fun emitArguments(args: Collection<HIRArgument>) {
-        val expressionEmitter = ExpressionEmitter(context)
+        val expressionEmitter = ExpressionEmitter(namespace, context)
 
         for (argument in args) with(argument) {
             expressionEmitter.emit(value)

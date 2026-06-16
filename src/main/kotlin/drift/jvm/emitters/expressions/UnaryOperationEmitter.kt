@@ -31,7 +31,8 @@ import org.objectweb.asm.Opcodes.*
  * @author Jonathan (GitHub: belicfr)
  */
 class UnaryOperationEmitter(
-    private val context: EmitContext) : InnerEmitter<HIRUnaryOp> {
+    private val namespace: String,
+    private val context: EmitContext) : SinkEmitter<HIRUnaryOp> {
 
     override fun emit(node: HIRUnaryOp) =
         when (node.operator) {
@@ -47,7 +48,7 @@ class UnaryOperationEmitter(
      * ```
      */
     private fun emitNegate(node: HIRUnaryOp) {
-        val expressionEmitter = ExpressionEmitter(context)
+        val expressionEmitter = ExpressionEmitter(namespace, context)
 
         val opcode = when (val type = node.type) {
             is HIRPrimitiveType -> when (type.kind) {
@@ -86,7 +87,7 @@ class UnaryOperationEmitter(
      * ```
      */
     private fun emitNot(node: HIRUnaryOp) {
-        val expressionEmitter = ExpressionEmitter(context)
+        val expressionEmitter = ExpressionEmitter(namespace, context)
 
         with(context.methodVisitor) {
             emitOperand(

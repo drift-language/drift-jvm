@@ -46,17 +46,17 @@ class ExpressionEmitter(
             }
 
             is HIRBinaryOp -> {
-                BinaryOperationEmitter(context)
+                BinaryOperationEmitter(namespace, context)
                     .emit(node)
             }
 
             is HIRUnaryOp -> {
-                UnaryOperationEmitter(context)
+                UnaryOperationEmitter(namespace, context)
                     .emit(node)
             }
 
             is HIRCall -> {
-                CallEmitter(context)
+                CallEmitter(namespace, context)
                     .emit(node)
             }
 

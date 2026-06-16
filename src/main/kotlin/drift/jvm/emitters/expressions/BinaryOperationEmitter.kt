@@ -12,7 +12,6 @@ package drift.jvm.emitters.expressions
 
 import drift.hir.BinaryOperator
 import drift.hir.HIRBinaryOp
-import drift.hir.HIRExpression
 import drift.hir.HIRPrimitiveType
 import drift.hir.HIRType
 import drift.hir.PrimitiveKind
@@ -86,12 +85,12 @@ class BinaryOperationEmitter(
 
 
     /**
-     * Inner emitter dedicated to all arithmetic binary operations.
+     * Sink emitter dedicated to all arithmetic binary operations.
      *
      * @author Jonathan (GitHub: belicfr)
      * @see BinaryOperationEmitter
      */
-    private inner class ArithmeticOperationEmitter : InnerEmitter<HIRBinaryOp> {
+    private inner class ArithmeticOperationEmitter : SinkEmitter<HIRBinaryOp> {
 
         override fun emit(node: HIRBinaryOp) {
             val opcode: Int = when (node.operator) {
@@ -105,7 +104,7 @@ class BinaryOperationEmitter(
                 else                -> error("Not an arithmetic operator")
             }
 
-            val expressionEmitter = ExpressionEmitter(context)
+            val expressionEmitter = ExpressionEmitter(namespace, context)
 
             emitOperand(
                 context.methodVisitor,
@@ -186,12 +185,12 @@ class BinaryOperationEmitter(
 
 
     /**
-     * Inner emitter dedicated to all comparison binary operations.
+     * Sink emitter dedicated to all comparison binary operations.
      *
      * @author Jonathan (GitHub: belicfr)
      * @see BinaryOperationEmitter
      */
-    private inner class ComparisonOperationEmitter : InnerEmitter<HIRBinaryOp> {
+    private inner class ComparisonOperationEmitter : SinkEmitter<HIRBinaryOp> {
 
         override fun emit(node: HIRBinaryOp) {
             val inversedConditionOpcode: Int = when (node.operator) {
@@ -207,7 +206,7 @@ class BinaryOperationEmitter(
                 else                -> error("Not a comparison operator")
             }
 
-            val expressionEmitter = ExpressionEmitter(context)
+            val expressionEmitter = ExpressionEmitter(namespace, context)
 
             emitOperand(
                 context.methodVisitor,
@@ -250,12 +249,12 @@ class BinaryOperationEmitter(
 
 
     /**
-     * Inner emitter dedicated to all logical binary operations.
+     * Sink emitter dedicated to all logical binary operations.
      *
      * @author Jonathan (GitHub: belicfr)
      * @see BinaryOperationEmitter
      */
-    private inner class LogicalOperationEmitter : InnerEmitter<HIRBinaryOp> {
+    private inner class LogicalOperationEmitter : SinkEmitter<HIRBinaryOp> {
 
         override fun emit(node: HIRBinaryOp) =
             when (node.operator) {
@@ -266,7 +265,7 @@ class BinaryOperationEmitter(
             }
 
         private fun emitAnd(node: HIRBinaryOp) {
-            val expressionEmitter = ExpressionEmitter(context)
+            val expressionEmitter = ExpressionEmitter(namespace, context)
 
             with(context.methodVisitor) {
                 val falseLabel = Label()
@@ -308,7 +307,7 @@ class BinaryOperationEmitter(
         }
 
         private fun emitOr(node: HIRBinaryOp) {
-            val expressionEmitter = ExpressionEmitter(context)
+            val expressionEmitter = ExpressionEmitter(namespace, context)
 
             with(context.methodVisitor) {
                 val trueLabel = Label()
