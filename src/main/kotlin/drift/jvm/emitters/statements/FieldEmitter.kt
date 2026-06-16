@@ -11,8 +11,7 @@
 package drift.jvm.emitters.statements
 
 import drift.hir.HIRField
-import drift.jvm.emitters.Emitter
-import drift.jvm.emitters.InnerEmitter
+import drift.jvm.emitters.SinkEmitter
 import drift.jvm.emitters.TempValues
 import drift.jvm.emitters.opcodes.OpcodesPlus.ACC_NOT_STATIC
 import drift.jvm.emitters.sugar.then
@@ -22,14 +21,14 @@ import org.objectweb.asm.Opcodes.ACC_STATIC
 
 
 /**
- * This emitter class permits emitting [HIRField] by writing it
- * to a [ClassWriter] instance.
+ * This emitter class permits emitting, in a class definition context,
+ * [HIRField] by writing it into a [ClassWriter] instance.
  *
  * @author Jonathan (GitHub: belicfr)
  */
 class FieldEmitter(
     private val classWriter: ClassWriter)
-    : InnerEmitter<HIRField> {
+    : SinkEmitter<HIRField> {
 
     override fun emit(node: HIRField) {
         val access = TempValues.visibility then

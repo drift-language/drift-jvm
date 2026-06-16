@@ -14,7 +14,7 @@ import drift.hir.HIRLiteral
 import drift.hir.HIRPrimitiveType
 import drift.hir.PrimitiveKind
 import drift.jvm.emitters.EmitContext
-import drift.jvm.emitters.InnerEmitter
+import drift.jvm.emitters.SinkEmitter
 import drift.jvm.emitters.opcodes.OpcodesPlus.BIPUSH_MAX
 import drift.jvm.emitters.opcodes.OpcodesPlus.BIPUSH_MIN
 import drift.jvm.emitters.opcodes.OpcodesPlus.SIPUSH_MAX
@@ -23,14 +23,14 @@ import org.objectweb.asm.Opcodes.*
 
 
 /**
- * This inner emitter handles literal expressions.
+ * This sink emitter handles literal expressions.
  * 
  * @author Jonathan (GitHub: belicfr)
  * @see HIRLiteral
  */
 class LiteralEmitter(
     private val context: EmitContext)
-    : InnerEmitter<HIRLiteral> {
+    : SinkEmitter<HIRLiteral> {
 
     override fun emit(node: HIRLiteral) {
         when (node.type) {

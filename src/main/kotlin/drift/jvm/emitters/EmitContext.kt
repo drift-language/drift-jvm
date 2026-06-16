@@ -24,5 +24,4 @@ import org.objectweb.asm.MethodVisitor
 data class EmitContext(
     val methodVisitor: MethodVisitor,
     val slotsManager: SlotsManager,
-    val nodesManager: NodesManager
-)
+    val nodesManager: NodesManager)

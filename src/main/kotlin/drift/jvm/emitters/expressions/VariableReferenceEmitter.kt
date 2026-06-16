@@ -12,18 +12,18 @@ package drift.jvm.emitters.expressions
 
 import drift.hir.*
 import drift.jvm.emitters.EmitContext
-import drift.jvm.emitters.InnerEmitter
+import drift.jvm.emitters.SinkEmitter
 import org.objectweb.asm.Opcodes.*
 
 
 /**
- * This inner emitter handles variable reference expressions.
+ * This sink emitter handles variable reference expressions.
  *
  * @author Jonathan (GitHub: belicfr)
  * @see HIRVariableRef
  */
 class VariableReferenceEmitter(
-    private val context: EmitContext) : InnerEmitter<HIRVariableRef> {
+    private val context: EmitContext) : SinkEmitter<HIRVariableRef> {
 
     override fun emit(node: HIRVariableRef) {
         val loadOpcode = when (val type = node.type) {

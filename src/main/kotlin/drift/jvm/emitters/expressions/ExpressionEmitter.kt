@@ -17,20 +17,21 @@ import drift.hir.HIRLiteral
 import drift.hir.HIRUnaryOp
 import drift.hir.HIRVariableRef
 import drift.jvm.emitters.EmitContext
-import drift.jvm.emitters.InnerEmitter
+import drift.jvm.emitters.SinkEmitter
 
 
 /**
- * This inner emitter handles expressions.
+ * This sink emitter handles expressions.
  * Regarding of the expression's kind, this emitter
- * dispatches to a dedicated inner emitter.
+ * dispatches to a dedicated sink emitter.
  *
  * @author Jonathan (GitHub: belicfr)
  * @see HIRExpression
  */
 class ExpressionEmitter(
+    private val namespace: String,
     private val context: EmitContext)
-    : InnerEmitter<HIRExpression> {
+    : SinkEmitter<HIRExpression> {
 
     override fun emit(node: HIRExpression) {
         when (node) {

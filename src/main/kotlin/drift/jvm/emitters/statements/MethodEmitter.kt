@@ -12,7 +12,7 @@ package drift.jvm.emitters.statements
 
 import drift.hir.HIRFunction
 import drift.jvm.emitters.EmitContext
-import drift.jvm.emitters.InnerEmitter
+import drift.jvm.emitters.SinkEmitter
 import drift.jvm.emitters.managers.NodesManager
 import drift.jvm.emitters.managers.SlotsManager
 import drift.jvm.emitters.TempValues
@@ -24,14 +24,14 @@ import org.objectweb.asm.Opcodes.ACC_STATIC
 
 
 /**
- * This emitter class permits emitting [HIRFunction] by writing it
- * to a [ClassWriter] instance.
+ * This emitter class permits emitting [HIRFunction] in a class definition
+ * context by writing it into a [ClassWriter] instance.
  *
  * @author Jonathan (GitHub: belicfr)
  */
 class MethodEmitter(
     private val classWriter: ClassWriter)
-    : InnerEmitter<HIRFunction> {
+    : SinkEmitter<HIRFunction> {
 
     override fun emit(node: HIRFunction) {
         val access = TempValues.visibility then

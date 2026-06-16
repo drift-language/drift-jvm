@@ -12,7 +12,7 @@ package drift.jvm.emitters.statements
 
 import drift.hir.*
 import drift.jvm.emitters.EmitContext
-import drift.jvm.emitters.InnerEmitter
+import drift.jvm.emitters.SinkEmitter
 import drift.jvm.emitters.expressions.ExpressionEmitter
 import org.objectweb.asm.Opcodes.*
 
@@ -23,8 +23,9 @@ import org.objectweb.asm.Opcodes.*
  * @author Jonathan (GitHub: belicfr)
  */
 class ReturnEmitter(
+    private val namespace: String,
     private val context: EmitContext)
-    : InnerEmitter<HIRReturn> {
+    : SinkEmitter<HIRReturn> {
 
     override fun emit(node: HIRReturn) {
         if (node.value == null) {
@@ -40,7 +41,7 @@ class ReturnEmitter(
 
         val value = node.value!!
 
-        ExpressionEmitter(context)
+        ExpressionEmitter(namespace, context)
             .emit(value)
 
         val returnOpcode = when (val type = value.type) {

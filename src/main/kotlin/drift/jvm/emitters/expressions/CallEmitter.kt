@@ -12,23 +12,22 @@ package drift.jvm.emitters.expressions
 
 import drift.hir.*
 import drift.jvm.emitters.EmitContext
-import drift.jvm.emitters.InnerEmitter
+import drift.jvm.emitters.SinkEmitter
 import drift.jvm.emitters.conventions.helpers.NamingHelper.formatClassName
 import drift.jvm.emitters.types.helpers.ClassHelper.getInternalClassName
-import drift.jvm.emitters.types.helpers.TypeConverter
 import drift.jvm.emitters.types.helpers.TypeConverter.formatTypes
-import language.LangInfo.NAMESPACE_SEPARATOR
 import org.objectweb.asm.Opcodes.*
 
 
 /**
+ * This sink emitter handles call expressions.
  *
- * 
  * @author Jonathan (GitHub: belicfr)
+ * @see HIRCall
  */
 class CallEmitter(
     private val namespace: String,
-    private val context: EmitContext) : InnerEmitter<HIRCall> {
+    private val context: EmitContext) : SinkEmitter<HIRCall> {
 
     override fun emit(node: HIRCall) {
         when (node.callee) {

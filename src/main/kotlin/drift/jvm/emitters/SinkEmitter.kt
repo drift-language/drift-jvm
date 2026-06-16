@@ -23,4 +23,4 @@ import drift.hir.HIRNode
  * 
  * @author Jonathan (GitHub: belicfr)
  */
-interface InnerEmitter<NODE: HIRNode> : Emitter<NODE, Unit>
+interface SinkEmitter<NODE: HIRNode> : Emitter<NODE, Unit>

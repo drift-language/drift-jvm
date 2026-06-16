@@ -17,14 +17,14 @@ import drift.hir.HIRPrimitiveType
 import drift.hir.HIRType
 import drift.hir.PrimitiveKind
 import drift.jvm.emitters.EmitContext
-import drift.jvm.emitters.InnerEmitter
+import drift.jvm.emitters.SinkEmitter
 import drift.jvm.emitters.expressions.helpers.OperationHelper.emitOperand
 import org.objectweb.asm.Label
 import org.objectweb.asm.Opcodes.*
 
 
 /**
- * This inner emitter handles binary operation
+ * This sink emitter handles binary operation
  * expressions.
  *
  * This emitter handles only native binary operations.
@@ -34,7 +34,8 @@ import org.objectweb.asm.Opcodes.*
  * @see HIRBinaryOp
  */
 class BinaryOperationEmitter(
-    private val context: EmitContext) : InnerEmitter<HIRBinaryOp> {
+    private val namespace: String,
+    private val context: EmitContext) : SinkEmitter<HIRBinaryOp> {
 
     override fun emit(node: HIRBinaryOp) {
         when {

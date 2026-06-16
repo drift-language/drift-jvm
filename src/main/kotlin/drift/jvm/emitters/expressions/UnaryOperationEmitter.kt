@@ -10,22 +10,19 @@
 
 package drift.jvm.emitters.expressions
 
-import drift.hir.HIRExpression
 import drift.hir.HIRPrimitiveType
-import drift.hir.HIRType
 import drift.hir.HIRUnaryOp
 import drift.hir.PrimitiveKind
 import drift.hir.UnaryOperator.NEGATE
 import drift.hir.UnaryOperator.NOT
 import drift.jvm.emitters.EmitContext
-import drift.jvm.emitters.InnerEmitter
-import drift.jvm.emitters.expressions.helpers.OperationHelper
+import drift.jvm.emitters.SinkEmitter
 import drift.jvm.emitters.expressions.helpers.OperationHelper.emitOperand
 import org.objectweb.asm.Opcodes.*
 
 
 /**
- * This inner emitter handles unary operation
+ * This sink emitter handles unary operation
  * expressions.
  *
  * This emitter handles only native unary operations.
