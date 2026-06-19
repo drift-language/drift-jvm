@@ -1,12 +1,12 @@
-/*
- * Drift Programming Language
- * Drift JVM Backend
- *
- * Copyright (c) 2026. Jonathan (GitHub: belicfr)
- *
- * This source code is licensed under the MIT License.
- * See the LICENSE file in the root directory for details.
- */
+/******************************************************************************
+ * Drift Programming Language                                                 *
+ * Drift Backend Development: Java Virtual Machine implementation.            *
+ *                                                                            *
+ * Copyright (c) 2026. Jonathan (GitHub: belicfr)                             *
+ *                                                                            *
+ * This source code is licensed under the MIT License.                        *
+ * See the LICENSE file in the root directory for details.                    *
+ ******************************************************************************/
 
 package drift.jvm.emitters.expressions
 
@@ -18,6 +18,7 @@ import drift.hir.HIRUnaryOp
 import drift.hir.HIRVariableRef
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.SinkEmitter
+import language.Namespace
 
 
 /**
@@ -29,7 +30,7 @@ import drift.jvm.emitters.SinkEmitter
  * @see HIRExpression
  */
 class ExpressionEmitter(
-    private val namespace: String,
+    private val namespace: Namespace,
     private val context: EmitContext)
     : SinkEmitter<HIRExpression> {
 

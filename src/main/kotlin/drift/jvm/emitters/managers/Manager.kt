@@ -1,5 +1,6 @@
 /******************************************************************************
  * Drift Programming Language                                                 *
+ * Drift Backend Development: Java Virtual Machine implementation.            *
  *                                                                            *
  * Copyright (c) 2026. Jonathan (GitHub: belicfr)                             *
  *                                                                            *

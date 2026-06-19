@@ -1,12 +1,12 @@
-/*
- * Drift Programming Language
- * Drift JVM Backend
- *
- * Copyright (c) 2026. Jonathan (GitHub: belicfr)
- *
- * This source code is licensed under the MIT License.
- * See the LICENSE file in the root directory for details.
- */
+/******************************************************************************
+ * Drift Programming Language                                                 *
+ * Drift Backend Development: Java Virtual Machine implementation.            *
+ *                                                                            *
+ * Copyright (c) 2026. Jonathan (GitHub: belicfr)                             *
+ *                                                                            *
+ * This source code is licensed under the MIT License.                        *
+ * See the LICENSE file in the root directory for details.                    *
+ ******************************************************************************/
 
 package drift.jvm.emitters.expressions
 
@@ -26,6 +26,11 @@ class VariableReferenceEmitter(
     private val context: EmitContext) : SinkEmitter<HIRVariableRef> {
 
     override fun emit(node: HIRVariableRef) {
+        val defHirId = node.definitionHirId
+
+        if (defHirId == null)
+            error("Unknown reference's definition for '${node.name}'")
+
         val loadOpcode = when (val type = node.type) {
             is HIRPrimitiveType -> getLoadOpcodeFromPrimitive(type.kind)
             is HIRClassType,
@@ -34,12 +39,13 @@ class VariableReferenceEmitter(
 
             else                -> error("Unexpected type")
         }
+
         val slotIndex = context
             .slotsManager
-            .get(node.definitionHirId)
+            .get(defHirId)
 
         if (slotIndex == null)
-            error("Unknown variable [DEF_HIR_ID=${node.definitionHirId}]")
+            error("Unknown variable [DEF_HIR_ID=${defHirId}]")
 
         with(context.methodVisitor) {
             visitVarInsn(

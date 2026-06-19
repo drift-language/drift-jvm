@@ -1,5 +1,6 @@
 /******************************************************************************
  * Drift Programming Language                                                 *
+ * Drift Backend Development: Java Virtual Machine implementation.            *
  *                                                                            *
  * Copyright (c) 2026. Jonathan (GitHub: belicfr)                             *
  *                                                                            *
@@ -9,6 +10,8 @@
 
 package drift.jvm.emitters.types.helpers
 
+import language.Namespace
+
 
 /**
  *
@@ -17,7 +20,7 @@ package drift.jvm.emitters.types.helpers
  */
 object ClassHelper {
 
-    fun getInternalClassName(namespace: String, clazz: String) =
-        if (namespace.isEmpty()) clazz
+    fun getInternalClassName(namespace: Namespace, clazz: String) =
+        if (namespace.namespace.isEmpty()) clazz
         else "$namespace/${clazz}"
 }
