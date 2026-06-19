@@ -72,7 +72,7 @@ class LiteralEmitter(
                     .visitLdcInsn(node.value as Long)
             }
             PrimitiveKind.INT, PrimitiveKind.UINT ->
-                when (val value: Int = node.value as Int) {
+                when (val value: Int = (node.value as Long).toInt()) {
                     in ICONST_M1..ICONST_5 -> {
                         context
                             .methodVisitor
