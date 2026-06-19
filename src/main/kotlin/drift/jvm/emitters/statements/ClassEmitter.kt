@@ -13,6 +13,8 @@ package drift.jvm.emitters.statements
 import drift.hir.HIRClass
 import drift.jvm.emitters.Emitter
 import drift.jvm.emitters.TempValues
+import drift.jvm.emitters.common.ClassGenerator
+import drift.jvm.emitters.common.ClassGenerator.ClassMembers
 import drift.jvm.emitters.types.helpers.ClassHelper
 import drift.jvm.emitters.types.helpers.ClassHelper.getInternalClassName
 import language.Namespace
@@ -32,42 +34,14 @@ class ClassEmitter(
     : Emitter<HIRClass, ByteArray> {
 
     override fun emit(node: HIRClass) : ByteArray {
-        val classWriter = ClassWriter(ClassWriter.COMPUTE_FRAMES)
-        // NOTE: [ClassWriter.COMPUTE_FRAMES] flag is used to make
-        //  frames management automatically.
-        //  Other flags would add some useless manual steps
-        //  and responsibilities.
+        val members = ClassMembers(
+            fields = node.fields,
+            staticFields = node.staticFields,
+            methods = node.methods,
+            staticMethods = node.staticMethods)
 
-
-        val superName = "java/lang/Object"
-        // NOTE: Currently, Drift does not support inheritance from other classes.
-        //  So all classes are inherited from `java/lang/Object` until support is added.
-
-        val interfaces = arrayOf<String>()
-        // NOTE: Drift does not support interfaces right now.
-        //  So an empty array is used to represent no interfaces.
-
-
-        val name = getInternalClassName(namespace, node.name)
-
-        classWriter.visit(
-            Emitter.OPCODE_VERSION,
-            TempValues.visibility,
-            name,
-            TempValues.signature,
-            superName,
-            interfaces)
-
-        val fieldEmitter = FieldEmitter(classWriter)
-        val methodEmitter = MethodEmitter(classWriter)
-
-        with(node) {
-            (staticFields + fields)
-                .forEach(fieldEmitter::emit)
-
-            (staticMethods + methods)
-                .forEach(methodEmitter::emit)
-        }
+        val classWriter = ClassGenerator(namespace)
+            .generate(node.name, members)
 
         classWriter.visitEnd()
 

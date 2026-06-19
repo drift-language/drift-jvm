@@ -33,7 +33,7 @@ interface Emitter<NODE: HIRNode, R> {
     companion object {
 
         /** Regarding `jvmToolchain` version, [Opcodes.V21] is used. */
-        protected const val OPCODE_VERSION = Opcodes.V21
+        const val OPCODE_VERSION = Opcodes.V21
     }
 
 
