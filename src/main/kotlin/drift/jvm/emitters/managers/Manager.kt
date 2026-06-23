@@ -10,9 +10,6 @@
 
 package drift.jvm.emitters.managers
 
-import drift.hir.HIRNode
-import kotlin.collections.set
-
 
 /**
  * A manager permits linking and storing elements
@@ -20,6 +17,7 @@ import kotlin.collections.set
  * 
  * @author Jonathan (GitHub: belicfr)
  */
+@Deprecated("Useless, must be replaced by a direct mutable map")
 abstract class Manager<K, V> {
 
     private val map = mutableMapOf<K, V>()

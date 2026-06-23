@@ -14,9 +14,11 @@ import drift.hir.HIRNode
 
 
 /**
- * Nodes manager permits linking [HIRNode] with HIR IDs.
- * It is useful to handle node references.
- * 
+ * Nodes manager permits linking [HIRNode] with definition HIR IDs,
+ * and storing top-level variables.
+ *
  * @author Jonathan (GitHub: belicfr)
  */
-class NodesManager : Manager<Int, HIRNode>()
+data class NodesManager(
+    val nodesByDefinition: MutableMap<Int, HIRNode> = mutableMapOf(),
+    val topLevelVariablesDefinitions: MutableSet<Int> = mutableSetOf())
