@@ -21,6 +21,6 @@ import language.Namespace
 object ClassHelper {
 
     fun getInternalClassName(namespace: Namespace, clazz: String) =
-        if (namespace.namespace.isEmpty()) clazz
+        if (namespace.getQualifiedName().isEmpty()) clazz
         else "$namespace/${clazz}"
 }

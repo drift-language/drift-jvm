@@ -7,15 +7,12 @@
  * This source code is licensed under the MIT License.                        *
  * See the LICENSE file in the root directory for details.                    *
  ******************************************************************************/
-
 package drift.jvm.emitters.statements
 
-import drift.hir.HIRClass
 import drift.hir.HIRExpressionStmt
-import drift.hir.HIRReturn
-import drift.hir.HIRStatement
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.SinkEmitter
+import drift.jvm.emitters.expressions.ExpressionEmitter
 import language.Namespace
 
 
@@ -24,24 +21,12 @@ import language.Namespace
  * 
  * @author Jonathan (GitHub: belicfr)
  */
-class StatementEmitter(
+class ExpressionStmtEmitter(
     private val namespace: Namespace,
-    private val context: EmitContext)
-    : SinkEmitter<HIRStatement> {
+    private val context: EmitContext) : SinkEmitter<HIRExpressionStmt> {
 
-    override fun emit(node: HIRStatement) {
-        when (node) {
-            is HIRClass ->
-                ClassEmitter(namespace, context.nodesManager).emit(node)
-
-            is HIRReturn ->
-                ReturnEmitter(namespace, context).emit(node)
-
-            is HIRExpressionStmt ->
-                ExpressionStmtEmitter(namespace, context).emit(node)
-
-
-            else        -> error("Unexpected statement")
-        }
+    override fun emit(node: HIRExpressionStmt) {
+        ExpressionEmitter(namespace, context)
+            .emit(node.expression)
     }
 }

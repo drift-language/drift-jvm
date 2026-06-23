@@ -11,13 +11,22 @@ package drift.jvm.emitters.common
 
 import drift.hir.HIRField
 import drift.hir.HIRFunction
+import drift.hir.HIRStatement
+import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.Emitter
 import drift.jvm.emitters.TempValues
+import drift.jvm.emitters.managers.NodesManager
+import drift.jvm.emitters.managers.SlotsManager
 import drift.jvm.emitters.statements.FieldEmitter
 import drift.jvm.emitters.statements.MethodEmitter
+import drift.jvm.emitters.statements.StatementEmitter
+import drift.jvm.emitters.sugar.then
 import drift.jvm.emitters.types.helpers.ClassHelper.getInternalClassName
 import language.Namespace
 import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.Opcodes.ACC_PUBLIC
+import org.objectweb.asm.Opcodes.ACC_STATIC
+import org.objectweb.asm.Opcodes.RETURN
 
 
 /**
@@ -26,9 +35,18 @@ import org.objectweb.asm.ClassWriter
  * @author Jonathan (GitHub: belicfr)
  */
 class ClassGenerator(
-    val namespace: Namespace) {
+    private val namespace: Namespace,
+    private val nodesManager: NodesManager) {
 
-    fun generate(name: String, members: ClassMembers) : ClassWriter {
+    fun generate(name: String, members: ClassMembers) =
+        generate(name, members, emptyList())
+
+    fun generate(
+        name: String,
+        members: ClassMembers,
+        executableStatements: Collection<HIRStatement>)
+        : ClassWriter {
+
         val classWriter = ClassWriter(ClassWriter.COMPUTE_FRAMES)
         // NOTE: [ClassWriter.COMPUTE_FRAMES] flag is used to make
         //  frames management automatically.
@@ -37,8 +55,9 @@ class ClassGenerator(
 
 
         val superName = "java/lang/Object"
-        // NOTE: Currently, Drift does not support inheritance from other classes.
-        //  So all classes are inherited from `java/lang/Object` until support is added.
+        // NOTE: Currently, Drift does not support inheritance from other
+        //  classes. So all classes are inherited from `java/lang/Object` until
+        //  support is added.
 
         val interfaces = arrayOf<String>()
         // NOTE: Drift does not support interfaces right now.
@@ -56,7 +75,7 @@ class ClassGenerator(
             interfaces)
 
         val fieldEmitter = FieldEmitter(classWriter)
-        val methodEmitter = MethodEmitter(classWriter)
+        val methodEmitter = MethodEmitter(classWriter, nodesManager)
 
         with(members) {
             (staticFields + fields)
@@ -66,7 +85,39 @@ class ClassGenerator(
                 .forEach(methodEmitter::emit)
         }
 
+        generateMainMethod(classWriter, executableStatements)
+
         return classWriter
+    }
+
+    private fun generateMainMethod(
+        classWriter: ClassWriter,
+        executableStatements: Collection<HIRStatement>) {
+
+        val access = ACC_PUBLIC then ACC_STATIC
+        val name = "main"
+        val descriptor = "([Ljava/lang/String;)V"
+
+        val mainVisitor = classWriter.visitMethod(
+            access,
+            name,
+            descriptor,
+            null,
+            null)
+
+        mainVisitor.visitCode()
+
+        val context = EmitContext(
+            mainVisitor,
+            SlotsManager(),
+            nodesManager)
+
+        val stmtEmitter = StatementEmitter(namespace, context)
+
+        executableStatements.forEach(stmtEmitter::emit)
+
+        mainVisitor.visitInsn(RETURN)
+        mainVisitor.visitEnd()
     }
 
 

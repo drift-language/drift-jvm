@@ -13,6 +13,7 @@ package drift.jvm
 import drift.hir.HIRClass
 import drift.hir.HIRStatement
 import drift.jvm.emitters.EmitContext
+import drift.jvm.emitters.managers.NodesManager
 import drift.jvm.emitters.specials.SyntheticClassEmitter
 import drift.jvm.emitters.statements.ClassEmitter
 import language.Namespace
@@ -26,10 +27,12 @@ import java.io.File.separatorChar
  * @author Jonathan (GitHub: belicfr)
  */
 class BackendBootstrap(
-    val namespace: Namespace,
-    val output: File) {
+    private val namespace: Namespace,
+    private val output: File) {
 
-    val topLevelStatements = mutableListOf<HIRStatement>()
+    private val topLevelStatements = mutableListOf<HIRStatement>()
+
+    private val nodesManager = NodesManager()
 
 
     fun boot(hir: List<HIRStatement>) {
@@ -42,19 +45,19 @@ class BackendBootstrap(
     }
 
     private fun handleClass(hirClass: HIRClass) {
-        val byteArray = ClassEmitter(namespace)
+        val byteArray = ClassEmitter(namespace, nodesManager)
             .emit(hirClass)
 
         println("[BACKEND] [CLASS=${hirClass.name}] Class generation succeeded. " +
-                "Emit bytecode length = ${byteArray.contentToString()}.\n")
+                "Emit bytecode length = ${byteArray.contentToString()}.")
     }
 
     private fun handleTopLevelStatements() {
-        val byteArray = SyntheticClassEmitter(namespace)
+        val byteArray = SyntheticClassEmitter(namespace, nodesManager)
             .emit(topLevelStatements)
 
         println("[BACKEND] Top level statements generation succeeded. " +
-                "Synthetic class length = ${byteArray.contentToString()}.\n")
+                "Synthetic class length = ${byteArray.contentToString()}.")
 
         output.mkdirs()
 

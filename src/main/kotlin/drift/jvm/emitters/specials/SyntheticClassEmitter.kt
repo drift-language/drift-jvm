@@ -34,7 +34,8 @@ import org.objectweb.asm.Opcodes.RETURN
  * @author Jonathan (GitHub: belicfr)
  */
 class SyntheticClassEmitter(
-    val namespace: Namespace)
+    private val namespace: Namespace,
+    private val nodesManager: NodesManager)
     : PluralEmitter<List<HIRStatement>, ByteArray> {
 
     override fun emit(nodes: List<HIRStatement>) : ByteArray {
@@ -51,8 +52,11 @@ class SyntheticClassEmitter(
         val members = ClassMembers(
             staticMethods = functions)
 
-        val classWriter = ClassGenerator(namespace)
-            .generate(className, members)
+        val executableStatements = nodes
+            .filter { it !is HIRFunction && it !is HIRVariable }
+
+        val classWriter = ClassGenerator(namespace, nodesManager)
+            .generate(className, members, executableStatements)
 
         val tlVarEmitter = TopLevelVariableEmitter(classWriter)
 
@@ -68,11 +72,16 @@ class SyntheticClassEmitter(
         val context = EmitContext(
             methodVisitor = clinitVisitor,
             slotsManager = SlotsManager(),
-            nodesManager = NodesManager())
+            nodesManager = nodesManager)
 
         val expressionEmitter = ExpressionEmitter(namespace, context)
 
         variables.forEach { variable ->
+            with(nodesManager) {
+                nodesByDefinition[variable.hirId] = variable
+                topLevelVariablesDefinitions += variable.hirId
+            }
+
             tlVarEmitter.emit(variable)
 
             variable.initialValue?.let { initialValue ->
@@ -88,7 +97,6 @@ class SyntheticClassEmitter(
         }
 
         clinitVisitor.visitInsn(RETURN)
-
         clinitVisitor.visitEnd()
 
         classWriter.visitEnd()

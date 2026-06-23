@@ -46,7 +46,7 @@ class CallEmitter(
 
         val reference = context
             .nodesManager
-            .get(calleeDefHirId)
+            .nodesByDefinition[calleeDefHirId]
             ?: error("Unknown callee")
 
         when (reference) {
@@ -133,7 +133,7 @@ class CallEmitter(
         fun getMethodFromContextOrThrow(defHirId: Int) : HIRFunction {
             return (context
                 .nodesManager
-                .get(defHirId)
+                .nodesByDefinition[defHirId]
                 ?: error("Undefined method in static context")) as? HIRFunction
                 ?: error("Unexpected structure")
         }

@@ -10,6 +10,7 @@
 
 package drift.jvm.emitters.expressions
 
+import drift.hir.HIRAssign
 import drift.hir.HIRBinaryOp
 import drift.hir.HIRCall
 import drift.hir.HIRExpression
@@ -36,30 +37,23 @@ class ExpressionEmitter(
 
     override fun emit(node: HIRExpression) {
         when (node) {
-            is HIRLiteral -> {
-                LiteralEmitter(context)
-                    .emit(node)
-            }
+            is HIRLiteral ->
+                LiteralEmitter(context).emit(node)
 
-            is HIRVariableRef -> {
-                VariableReferenceEmitter(context)
-                    .emit(node)
-            }
+            is HIRVariableRef ->
+                VariableReferenceEmitter(context).emit(node)
 
-            is HIRBinaryOp -> {
-                BinaryOperationEmitter(namespace, context)
-                    .emit(node)
-            }
+            is HIRBinaryOp ->
+                BinaryOperationEmitter(namespace, context).emit(node)
 
-            is HIRUnaryOp -> {
-                UnaryOperationEmitter(namespace, context)
-                    .emit(node)
-            }
+            is HIRUnaryOp ->
+                UnaryOperationEmitter(namespace, context).emit(node)
 
-            is HIRCall -> {
-                CallEmitter(namespace, context)
-                    .emit(node)
-            }
+            is HIRCall ->
+                CallEmitter(namespace, context).emit(node)
+
+            is HIRAssign ->
+                AssignEmitter(namespace, context).emit(node)
 
 
             else -> error("Unexpected expression kind")

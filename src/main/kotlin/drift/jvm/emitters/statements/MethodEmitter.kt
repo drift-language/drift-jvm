@@ -30,7 +30,8 @@ import org.objectweb.asm.Opcodes.ACC_STATIC
  * @author Jonathan (GitHub: belicfr)
  */
 class MethodEmitter(
-    private val classWriter: ClassWriter)
+    private val classWriter: ClassWriter,
+    private val nodesManager: NodesManager)
     : SinkEmitter<HIRFunction> {
 
     override fun emit(node: HIRFunction) {
@@ -54,7 +55,7 @@ class MethodEmitter(
         val context = EmitContext(
             methodVisitor = methodVisitor,
             slotsManager = SlotsManager(),
-            nodesManager = NodesManager())
+            nodesManager = nodesManager)
 
         with(methodVisitor) {
             visitCode()
