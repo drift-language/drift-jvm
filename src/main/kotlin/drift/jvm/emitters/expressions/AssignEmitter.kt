@@ -9,10 +9,10 @@
  ******************************************************************************/
 package drift.jvm.emitters.expressions
 
-import drift.hir.AssignTarget
 import drift.hir.FieldTarget
 import drift.hir.HIRAssign
-import drift.hir.VariableTarget
+import drift.hir.LocalVariableTarget
+import drift.hir.TopLevelVariableTarget
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.SinkEmitter
 import drift.jvm.emitters.types.helpers.TypeConverter.toAsmType
@@ -32,32 +32,22 @@ class AssignEmitter(
     : SinkEmitter<HIRAssign> {
 
     override fun emit(node: HIRAssign) {
+        ExpressionEmitter(namespace, context)
+            .emit(node.value)
+
         when (val target = node.target) {
-            is FieldTarget      -> emitFieldAssign(node, target)
-            is VariableTarget   -> emitVariableAssign(node, target)
+            is FieldTarget              -> emitFieldAssign(node, target)
+            is TopLevelVariableTarget   -> emitTopLevelVariable(node, target)
+            is LocalVariableTarget      -> emitLocalVariable(node, target)
         }
     }
 
     private fun emitFieldAssign(node: HIRAssign, target: FieldTarget) {
-        ExpressionEmitter(namespace, context)
-            .emit(node.value)
-
-        emitFieldAssignInstruction(
-            node,
-            target,
-            isStatic = target.fieldOffset == -1)
-    }
-
-    private fun emitFieldAssignInstruction(
-        node: HIRAssign,
-        target: FieldTarget,
-        isStatic: Boolean) {
-
         val opcode =
-            if (isStatic) PUTSTATIC
+            if (target.fieldOffset == -1) PUTSTATIC
             else PUTFIELD
 
-        val owner = namespace.getQualifiedName()
+        val owner = target.ownerNamespace.getQualifiedName()
         val descriptor = toAsmType(node.type)
 
         context.methodVisitor.visitFieldInsn(
@@ -67,13 +57,19 @@ class AssignEmitter(
             descriptor)
     }
 
-    private fun emitVariableAssign(node: HIRAssign, target: VariableTarget) {
-//        val isTopLevel = context
-//            .nodesManager
-//            .topLevelVariablesDefinitions[]
+    private fun emitTopLevelVariable(node: HIRAssign, target: TopLevelVariableTarget) {
+        val opcode = PUTSTATIC
+        val owner = target.ownerNamespace.getQualifiedName()
+        val descriptor = toAsmType(node.type)
+
+        context.methodVisitor.visitFieldInsn(
+            opcode,
+            owner,
+            target.name,
+            descriptor)
     }
 
-    private fun emitTopLevelVariable(node: HIRAssign) {
+    private fun emitLocalVariable(node: HIRAssign, target: LocalVariableTarget) {
         TODO()
     }
 }
