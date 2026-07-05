@@ -20,16 +20,14 @@ import org.objectweb.asm.Opcodes.*
  * This sink emitter handles variable reference expressions.
  *
  * @author Jonathan (GitHub: belicfr)
- * @see HIRVariableRef
+ * @see HIRReference
  */
-class VariableReferenceEmitter(
-    private val context: EmitContext) : SinkEmitter<HIRVariableRef> {
+class ReferenceEmitter(
+    private val context: EmitContext) : SinkEmitter<HIRReference> {
 
-    override fun emit(node: HIRVariableRef) {
+    override fun emit(node: HIRReference) {
         val defHirId = node.definitionHirId
-
-        if (defHirId == null)
-            error("Unknown reference's definition for '${node.name}'")
+            ?: error("Unknown reference's definition for '${node.name}'")
 
         val loadOpcode = when (val type = node.type) {
             is HIRPrimitiveType -> getLoadOpcodeFromPrimitive(type.kind)
