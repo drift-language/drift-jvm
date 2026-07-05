@@ -41,7 +41,7 @@ class StatementEmitter(
                 ExpressionStmtEmitter(namespace, context).emit(node)
 
 
-            else        -> error("Unexpected statement")
+            else -> error("Unexpected statement")
         }
     }
 }

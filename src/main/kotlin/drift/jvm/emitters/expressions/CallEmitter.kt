@@ -32,7 +32,7 @@ class CallEmitter(
 
     override fun emit(node: HIRCall) {
         when (node.callee) {
-            is HIRVariableRef   -> emitFromVariableReference(node)
+            is HIRReference   -> emitFromVariableReference(node)
             is HIRMethodAccess  -> emitMethodCall(node)
 
             else                -> error("Unexpected callee")
@@ -40,7 +40,7 @@ class CallEmitter(
     }
 
     private fun emitFromVariableReference(node: HIRCall) {
-        val callee = node.callee as HIRVariableRef
+        val callee = node.callee as HIRReference
         val calleeDefHirId = callee.definitionHirId
             ?: return
 

@@ -16,7 +16,7 @@ import drift.hir.HIRCall
 import drift.hir.HIRExpression
 import drift.hir.HIRLiteral
 import drift.hir.HIRUnaryOp
-import drift.hir.HIRVariableRef
+import drift.hir.HIRReference
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.SinkEmitter
 import language.Namespace
@@ -40,8 +40,8 @@ class ExpressionEmitter(
             is HIRLiteral ->
                 LiteralEmitter(context).emit(node)
 
-            is HIRVariableRef ->
-                VariableReferenceEmitter(context).emit(node)
+            is HIRReference ->
+                ReferenceEmitter(context).emit(node)
 
             is HIRBinaryOp ->
                 BinaryOperationEmitter(namespace, context).emit(node)
