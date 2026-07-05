@@ -79,7 +79,6 @@ class SyntheticClassEmitter(
         variables.forEach { variable ->
             with(nodesManager) {
                 nodesByDefinition[variable.hirId] = variable
-                topLevelVariablesDefinitions += variable.hirId
             }
 
             tlVarEmitter.emit(variable)

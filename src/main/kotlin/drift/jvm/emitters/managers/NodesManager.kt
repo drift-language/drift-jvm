@@ -20,5 +20,4 @@ import drift.hir.HIRNode
  * @author Jonathan (GitHub: belicfr)
  */
 data class NodesManager(
-    val nodesByDefinition: MutableMap<Int, HIRNode> = mutableMapOf(),
-    val topLevelVariablesDefinitions: MutableSet<Int> = mutableSetOf())
+    val nodesByDefinition: MutableMap<Int, HIRNode> = mutableMapOf())
