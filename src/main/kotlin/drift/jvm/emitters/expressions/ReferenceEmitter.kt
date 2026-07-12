@@ -40,10 +40,8 @@ class ReferenceEmitter(
 
         val slotIndex = context
             .slotsManager
-            .get(defHirId)
-
-        if (slotIndex == null)
-            error("Unknown variable [DEF_HIR_ID=${defHirId}]")
+            .getSlotIndex(defHirId)
+            ?: error("Unknown variable [DEF_HIR_ID=${defHirId}]")
 
         with(context.methodVisitor) {
             visitVarInsn(
