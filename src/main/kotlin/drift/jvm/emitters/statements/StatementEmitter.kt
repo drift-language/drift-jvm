@@ -40,6 +40,9 @@ class StatementEmitter(
             is HIRExpressionStmt ->
                 ExpressionStmtEmitter(namespace, context).emit(node)
 
+            is HIRVariable ->
+                VariableEmitter(namespace, context).emit(node)
+
 
             else -> error("Unexpected statement")
         }
