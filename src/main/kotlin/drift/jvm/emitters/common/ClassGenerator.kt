@@ -11,6 +11,7 @@ package drift.jvm.emitters.common
 
 import drift.hir.HIRField
 import drift.hir.HIRFunction
+import drift.hir.HIRMethod
 import drift.hir.HIRStatement
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.Emitter
@@ -64,8 +65,6 @@ class ClassGenerator(
         //  So an empty array is used to represent no interfaces.
 
 
-        val name = getInternalClassName(namespace, name)
-
         classWriter.visit(
             Emitter.OPCODE_VERSION,
             TempValues.visibility,
@@ -75,7 +74,10 @@ class ClassGenerator(
             interfaces)
 
         val fieldEmitter = FieldEmitter(classWriter)
-        val methodEmitter = MethodEmitter(classWriter, nodesManager)
+        val methodEmitter = MethodEmitter(
+            namespace,
+            classWriter,
+            nodesManager)
 
         with(members) {
             (staticFields + fields)
@@ -124,6 +126,6 @@ class ClassGenerator(
     data class ClassMembers(
         val fields: List<HIRField> = emptyList(),
         val staticFields: List<HIRField> = emptyList(),
-        val methods: List<HIRFunction> = emptyList(),
-        val staticMethods: List<HIRFunction> = emptyList())
+        val methods: List<HIRMethod> = emptyList(),
+        val staticMethods: List<HIRMethod> = emptyList())
 }

@@ -27,21 +27,19 @@ import org.objectweb.asm.Opcodes.ACC_STATIC
 
 
 /**
- * This emitter class permits emitting [HIRMethod] in a class
- * context by writing it into a [ClassWriter] instance.
+ * This emitter class permits emitting [HIRFunction].
  *
  * @author Jonathan (GitHub: belicfr)
  */
-class MethodEmitter(
+class FunctionEmitter(
     private val namespace: Namespace,
     private val classWriter: ClassWriter,
     private val nodesManager: NodesManager)
-    : SinkEmitter<HIRMethod> {
+    : SinkEmitter<HIRFunction> {
 
-    override fun emit(node: HIRMethod) {
-        val access = TempValues.visibility then
-                if (node.isStatic) ACC_STATIC
-                else ACC_NOT_STATIC
+    override fun emit(node: HIRFunction) {
+        val access = TempValues.visibility then ACC_STATIC
+        // NOTE: functions are
 
         val inputTypes = node
             .parameters
