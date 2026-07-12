@@ -11,6 +11,7 @@
 package drift.jvm.emitters.types.helpers
 
 import drift.hir.PrimitiveKind
+import drift.jvm.emitters.managers.SlotsManager
 
 
 const val stringAsmType = "Ljava/lang/String;"
@@ -41,6 +42,16 @@ enum class PrimitiveType(
 
     NULL(PrimitiveKind.NULL, objectAsmType)
     ;
+
+
+    /**
+     * Needed width to allocate in [SlotsManager] for the current type.
+     *
+     * @return Width to allocate.
+     */
+    fun getSlotWidth() =
+        if (this == LONG)   SlotsManager.DOUBLE_WIDTH
+        else                SlotsManager.SIMPLE_WIDTH
 
 
     companion object {

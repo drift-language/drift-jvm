@@ -12,6 +12,7 @@ package drift.jvm.emitters.types.helpers
 
 import drift.hir.HIRPrimitiveType
 import drift.hir.HIRType
+import drift.jvm.emitters.managers.SlotsManager
 
 
 /**
@@ -57,4 +58,17 @@ object TypeConverter {
 
         return "($formattedInputTypes)$formattedOutputType"
     }
+
+
+    /**
+     * Return the necessary slot width for the given type.
+     * - A primitive type needs [SlotsManager.SIMPLE_WIDTH] if non-double, else
+     * [SlotsManager.DOUBLE_WIDTH].
+     * - A non-primitive one needs [SlotsManager.SIMPLE_WIDTH].
+     *
+     * @return The computed slot width.
+     */
+    fun getSlotWidth(hirType: HIRType) : Int =
+        if (hirType is HIRPrimitiveType) PrimitiveType.fromHirType(hirType.kind).getSlotWidth()
+        else SlotsManager.SIMPLE_WIDTH
 }
