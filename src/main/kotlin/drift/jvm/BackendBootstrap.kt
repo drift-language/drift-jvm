@@ -48,6 +48,13 @@ class BackendBootstrap(
         val byteArray = ClassEmitter(namespace, nodesManager)
             .emit(hirClass)
 
+        output.mkdirs()
+
+        val outputFile = output
+            .resolve("${hirClass.name}.class")
+
+        outputFile.writeBytes(byteArray)
+
         println("[BACKEND] [CLASS=${hirClass.name}] Class generation succeeded. " +
                 "Emit bytecode length = ${byteArray.contentToString()}.")
     }
