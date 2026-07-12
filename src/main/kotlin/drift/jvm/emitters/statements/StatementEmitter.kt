@@ -14,6 +14,7 @@ import drift.hir.HIRClass
 import drift.hir.HIRExpressionStmt
 import drift.hir.HIRReturn
 import drift.hir.HIRStatement
+import drift.hir.HIRVariable
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.SinkEmitter
 import language.Namespace
@@ -31,8 +32,7 @@ class StatementEmitter(
 
     override fun emit(node: HIRStatement) {
         when (node) {
-            is HIRClass ->
-                ClassEmitter(namespace, context.nodesManager).emit(node)
+            is HIRClass -> error("Class definitions should be handled before.")
 
             is HIRReturn ->
                 ReturnEmitter(namespace, context).emit(node)
