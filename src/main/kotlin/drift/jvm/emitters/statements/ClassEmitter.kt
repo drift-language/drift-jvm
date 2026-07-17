@@ -44,10 +44,13 @@ class ClassEmitter(
             methods = node.methods,
             staticMethods = node.staticMethods)
 
+        val className = getInternalClassName(namespace, node.name)
         val classWriter = ClassGenerator(namespace, nodesManager)
-            .generate(node.name, members)
+            .generate(className, members)
 
         classWriter.visitEnd()
+
+        nodesManager.nodesByDefinition[node.hirId] = node
 
         return classWriter.toByteArray()
     }
