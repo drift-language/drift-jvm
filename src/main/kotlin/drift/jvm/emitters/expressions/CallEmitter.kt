@@ -14,7 +14,6 @@ import drift.hir.*
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.SinkEmitter
 import drift.jvm.emitters.conventions.helpers.NamingHelper.formatClassName
-import drift.jvm.emitters.types.helpers.ClassHelper.getInternalClassName
 import drift.jvm.emitters.types.helpers.TypeConverter.formatTypes
 import language.Namespace
 import org.objectweb.asm.Opcodes.*
@@ -60,9 +59,7 @@ class CallEmitter(
     private fun emitConstructorCall(call: HIRCall, ref: HIRClass) {
         val constructor = "<init>"
 
-        val className = getInternalClassName(
-            namespace,
-            ref.name)
+        val className = (namespace + ref.name).getNamespace()
 
         val ctorHook = ref
             .hooks

@@ -10,7 +10,6 @@
 package drift.jvm.emitters.common
 
 import drift.hir.HIRField
-import drift.hir.HIRFunction
 import drift.hir.HIRMethod
 import drift.hir.HIRStatement
 import drift.jvm.emitters.EmitContext
@@ -22,7 +21,6 @@ import drift.jvm.emitters.statements.FieldEmitter
 import drift.jvm.emitters.statements.MethodEmitter
 import drift.jvm.emitters.statements.StatementEmitter
 import drift.jvm.emitters.sugar.then
-import drift.jvm.emitters.types.helpers.ClassHelper.getInternalClassName
 import language.Namespace
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes.ACC_PUBLIC

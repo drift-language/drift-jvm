@@ -12,13 +12,11 @@ package drift.jvm
 
 import drift.hir.HIRClass
 import drift.hir.HIRStatement
-import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.managers.NodesManager
 import drift.jvm.emitters.specials.SyntheticClassEmitter
 import drift.jvm.emitters.statements.ClassEmitter
 import language.Namespace
 import java.io.File
-import java.io.File.separatorChar
 
 
 /**
@@ -69,7 +67,7 @@ class BackendBootstrap(
         output.mkdirs()
 
         val outputFile = output
-            .resolve("$${namespace.getFilename()}.class")
+            .resolve("$${namespace.getSimpleName()}.class")
 
         outputFile.writeBytes(byteArray)
     }

@@ -15,6 +15,8 @@ import drift.hir.LocalVariableTarget
 import drift.hir.TopLevelVariableTarget
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.SinkEmitter
+import drift.jvm.emitters.opcodes.StoreOpcode
+import drift.jvm.emitters.types.helpers.ClassHelper
 import drift.jvm.emitters.types.helpers.TypeConverter.toAsmType
 import language.Namespace
 import org.objectweb.asm.Opcodes.PUTFIELD
@@ -47,7 +49,7 @@ class AssignEmitter(
             if (target.fieldOffset == -1) PUTSTATIC
             else PUTFIELD
 
-        val owner = target.ownerNamespace.getQualifiedName()
+        val owner = target.ownerNamespace.getNamespace()
         val descriptor = toAsmType(node.type)
 
         context.methodVisitor.visitFieldInsn(
@@ -59,7 +61,7 @@ class AssignEmitter(
 
     private fun emitTopLevelVariable(node: HIRAssign, target: TopLevelVariableTarget) {
         val opcode = PUTSTATIC
-        val owner = target.ownerNamespace.getQualifiedName()
+        val owner = ClassHelper.getSyntheticClassName(target.ownerNamespace)
         val descriptor = toAsmType(node.type)
 
         context.methodVisitor.visitFieldInsn(

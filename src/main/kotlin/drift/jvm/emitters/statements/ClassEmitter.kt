@@ -11,17 +11,11 @@
 package drift.jvm.emitters.statements
 
 import drift.hir.HIRClass
-import drift.hir.HIRFunction
-import drift.hir.HIRVariable
 import drift.jvm.emitters.Emitter
-import drift.jvm.emitters.TempValues
 import drift.jvm.emitters.common.ClassGenerator
 import drift.jvm.emitters.common.ClassGenerator.ClassMembers
 import drift.jvm.emitters.managers.NodesManager
-import drift.jvm.emitters.types.helpers.ClassHelper
-import drift.jvm.emitters.types.helpers.ClassHelper.getInternalClassName
 import language.Namespace
-import org.objectweb.asm.ClassWriter
 
 
 /**
@@ -44,7 +38,7 @@ class ClassEmitter(
             methods = node.methods,
             staticMethods = node.staticMethods)
 
-        val className = getInternalClassName(namespace, node.name)
+        val className = (namespace + node.name).getNamespace()
         val classWriter = ClassGenerator(namespace, nodesManager)
             .generate(className, members)
 

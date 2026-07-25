@@ -39,9 +39,7 @@ class SyntheticClassEmitter(
     : PluralEmitter<List<HIRStatement>, ByteArray> {
 
     override fun emit(nodes: List<HIRStatement>) : ByteArray {
-        val className = "$${namespace.getFilename()}"
-
-        println("Emitting synthetic class... '${className}'")
+        val className = ClassHelper.getSyntheticClassName(namespace)
 
         val variables = nodes
             .filterIsInstance<HIRVariable>()
