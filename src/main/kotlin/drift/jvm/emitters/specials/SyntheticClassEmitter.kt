@@ -20,6 +20,8 @@ import drift.jvm.emitters.common.ClassGenerator.ClassMembers
 import drift.jvm.emitters.expressions.ExpressionEmitter
 import drift.jvm.emitters.managers.NodesManager
 import drift.jvm.emitters.managers.SlotsManager
+import drift.jvm.emitters.statements.FunctionEmitter
+import drift.jvm.emitters.types.helpers.ClassHelper
 import drift.jvm.emitters.types.helpers.TypeConverter.toAsmType
 import language.Namespace
 import org.objectweb.asm.Opcodes.ACC_STATIC
@@ -47,14 +49,16 @@ class SyntheticClassEmitter(
         val functions = nodes
             .filterIsInstance<HIRFunction>()
 
-        val members = ClassMembers(
-            staticMethods = functions)
+        val members = ClassMembers()
 
         val executableStatements = nodes
             .filter { it !is HIRFunction && it !is HIRVariable }
 
         val classWriter = ClassGenerator(namespace, nodesManager)
             .generate(className, members, executableStatements)
+
+        val functionEmitter = FunctionEmitter(namespace, classWriter, nodesManager)
+        functions.forEach(functionEmitter::emit)
 
         val tlVarEmitter = TopLevelVariableEmitter(classWriter)
 
@@ -75,9 +79,7 @@ class SyntheticClassEmitter(
         val expressionEmitter = ExpressionEmitter(namespace, context)
 
         variables.forEach { variable ->
-            with(nodesManager) {
-                nodesByDefinition[variable.hirId] = variable
-            }
+            nodesManager.nodesByDefinition[variable.hirId] = variable
 
             tlVarEmitter.emit(variable)
 
@@ -91,6 +93,10 @@ class SyntheticClassEmitter(
                     variable.name,
                     toAsmType(variable.type))
             }
+        }
+
+        functions.forEach { function ->
+            nodesManager.nodesByDefinition[function.hirId] = function
         }
 
         clinitVisitor.visitInsn(RETURN)
