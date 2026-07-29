@@ -11,15 +11,14 @@
 package drift.jvm.emitters.statements
 
 import drift.hir.HIRFunction
-import drift.hir.HIRMethod
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.SinkEmitter
 import drift.jvm.emitters.managers.NodesManager
 import drift.jvm.emitters.managers.SlotsManager
 import drift.jvm.emitters.TempValues
-import drift.jvm.emitters.opcodes.OpcodesPlus.ACC_NOT_STATIC
+import drift.jvm.emitters.statements.common.emitCallableBody
+import drift.jvm.emitters.statements.common.allocateCallableParameterSlots
 import drift.jvm.emitters.sugar.then
-import drift.jvm.emitters.types.helpers.TypeConverter
 import drift.jvm.emitters.types.helpers.TypeConverter.formatTypes
 import language.Namespace
 import org.objectweb.asm.ClassWriter
@@ -56,29 +55,12 @@ class FunctionEmitter(
 
         val slotsManager = SlotsManager()
 
-        if (!node.isStatic)
-            slotsManager.allocate(SlotsManager.SIMPLE_WIDTH)
-            // NOTE: in an instance context, '$this' needs to be allocated as
-            //  the 0-indexed slot.
+        allocateCallableParameterSlots(slotsManager, node.parameters)
 
-        for (param in node.parameters) {
-            val slotWidth = TypeConverter.getSlotWidth(param.type)
-            slotsManager.allocateAndLink(param.hirId, slotWidth)
-        }
-
-        val context = EmitContext(
+        val emitContext = EmitContext(
             methodVisitor = methodVisitor,
             slotsManager = slotsManager,
             nodesManager = nodesManager)
-
-        with(methodVisitor) {
-            visitCode()
-
-            node.body
-                .forEach(StatementEmitter(namespace, context)::emit)
-
-            visitMaxs(0, 0)
-            visitEnd()
-        }
+        emitCallableBody(namespace, emitContext, node.body)
     }
 }
