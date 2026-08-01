@@ -38,15 +38,15 @@ class ReferenceEmitter(
             else                -> error("Unexpected type")
         }
 
-        val slotIndex = context
+        val slot = context
             .slotsManager
-            .getSlotIndex(defHirId)
+            .getSlotAllocation(defHirId)
             ?: error("Unknown variable [DEF_HIR_ID=${defHirId}]")
 
         with(context.methodVisitor) {
             visitVarInsn(
                 loadOpcode,
-                slotIndex)
+                slot.index)
         }
     }
 

@@ -8,19 +8,13 @@
  ******************************************************************************/
 package drift.jvm.emitters.statements
 
-import drift.hir.HIRClassType
-import drift.hir.HIROptionalType
-import drift.hir.HIRPrimitiveType
-import drift.hir.HIRUnionType
 import drift.hir.HIRVariable
-import drift.hir.PrimitiveKind
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.SinkEmitter
 import drift.jvm.emitters.expressions.ExpressionEmitter
 import drift.jvm.emitters.opcodes.StoreOpcode
 import drift.jvm.emitters.types.helpers.TypeConverter.getSlotWidth
 import language.Namespace
-import org.objectweb.asm.Opcodes.*
 
 
 /**
@@ -34,7 +28,7 @@ class VariableEmitter(
 
     override fun emit(node: HIRVariable) {
         val slotWidth = getSlotWidth(node.type)
-        val slotIndex = context.slotsManager
+        val slot = context.slotsManager
             .allocateAndLink(node.hirId, slotWidth)
 
         node.initialValue?.let {
@@ -44,7 +38,7 @@ class VariableEmitter(
             val opcode = StoreOpcode.fromType(node.type)
 
             context.methodVisitor
-                .visitVarInsn(opcode, slotIndex)
+                .visitVarInsn(opcode, slot.index)
         }
     }
 }

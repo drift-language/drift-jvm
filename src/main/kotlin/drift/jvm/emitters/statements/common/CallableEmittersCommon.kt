@@ -12,6 +12,7 @@ import drift.hir.HIRParameter
 import drift.hir.HIRStatement
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.managers.SlotsManager
+import drift.jvm.emitters.managers.SlotsManager.SlotAllocation
 import drift.jvm.emitters.statements.StatementEmitter
 import drift.jvm.emitters.types.helpers.TypeConverter
 import language.Namespace
@@ -20,17 +21,28 @@ import language.Namespace
 /**
  * Common logic code from all callable emitters. It allocates the parameter's
  * slot after computing its width.
+ *
+ * @return The allocated slot's index.
  */
-fun allocateCallableParameterSlot(slotsManager: SlotsManager, parameter : HIRParameter) {
+fun allocateCallableParameterSlot(slotsManager: SlotsManager, parameter : HIRParameter) : SlotAllocation {
     val slotWidth = TypeConverter.getSlotWidth(parameter.type)
-    slotsManager.allocateAndLink(parameter.hirId, slotWidth)
+
+    return slotsManager.allocateAndLink(parameter.hirId, slotWidth)
 }
 
 /**
  * Allocates a slot for each provided callable parameter.
+ *
+ * @return
  */
-fun allocateCallableParameterSlots(slotsManager: SlotsManager, parameters: List<HIRParameter>) =
-    parameters.forEach { allocateCallableParameterSlot(slotsManager, it) }
+fun allocateCallableParameterSlots(
+    slotsManager: SlotsManager,
+    parameters: List<HIRParameter>) : Map<HIRParameter, SlotAllocation> {
+
+    return parameters.associateWith { parameter ->
+        allocateCallableParameterSlot(slotsManager, parameter)
+    }
+}
 
 
 /**
@@ -50,3 +62,4 @@ fun emitCallableBody(namespace: Namespace, emitContext: EmitContext, body: List<
         visitEnd()
     }
 }
+

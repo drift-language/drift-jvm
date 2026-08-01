@@ -62,7 +62,7 @@ class MethodEmitter(
             slotsManager.allocate(SlotsManager.SIMPLE_WIDTH)
             // NOTE: in an instance context, '$this' needs to be allocated as
             //  the 0-indexed slot.
-        
+
         allocateCallableParameterSlots(slotsManager, node.parameters)
 
         val emitContext = EmitContext(

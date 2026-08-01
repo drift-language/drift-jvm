@@ -73,13 +73,13 @@ class AssignEmitter(
 
     private fun emitLocalVariable(node: HIRAssign, target: LocalVariableTarget) {
         val opcode = StoreOpcode.fromType(node.type)
-        val slotIndex = context
+        val slot = context
             .slotsManager
-            .getSlotIndex(target.definitionHirId)
+            .getSlotAllocation(target.definitionHirId)
             ?: error("Unknown variable: '${target.name}'")
 
         context.methodVisitor.visitVarInsn(
             opcode,
-            slotIndex)
+            slot.index)
     }
 }
