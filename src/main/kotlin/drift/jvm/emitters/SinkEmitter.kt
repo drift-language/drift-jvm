@@ -11,6 +11,7 @@
 package drift.jvm.emitters
 
 import drift.hir.HIRNode
+import org.objectweb.asm.ClassWriter
 
 
 /**
@@ -18,8 +19,7 @@ import drift.hir.HIRNode
  * which does not produce value.
  *
  * An example of usage of this emitter variant is
- * for manipulating a [org.objectweb.asm.ClassWriter]
- * or visitor instance.
+ * for manipulating a [ClassWriter] or visitor instance.
  * 
  * @author Jonathan (GitHub: belicfr)
  */
