@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    testImplementation("io.kotest:kotest-assertions-core:6.0.3")
 
     implementation("fr.belic.drift:drift-hir:2026.0")
     implementation("fr.belic.drift:drift-common:2026.0")
