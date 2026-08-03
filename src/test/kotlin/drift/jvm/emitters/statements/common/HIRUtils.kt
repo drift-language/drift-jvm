@@ -8,10 +8,18 @@
  ******************************************************************************/
 package drift.jvm.emitters.statements.common
 
+import drift.hir.HIRCapturedVariable
+import drift.hir.HIRFunction
+import drift.hir.HIRMethod
 import drift.hir.HIRParameter
+import drift.hir.HIRPrimitiveType
+import drift.hir.HIRStatement
 import drift.hir.HIRType
+import drift.hir.PrimitiveKind
+import drift.hir.metadata.HIRAnnotation
 
 
+@Deprecated("Use parameterFixture() instead")
 object HIRParameterUtils {
 
     /**
@@ -26,4 +34,53 @@ object HIRParameterUtils {
             name = "foo",
             type)
     }
+}
+
+
+fun parameterFixture(
+    hirId: Int = 1,
+    name: String = "foo",
+    type: HIRType = HIRPrimitiveType(PrimitiveKind.INT)) : HIRParameter {
+
+    return HIRParameter(hirId, name, type)
+}
+
+
+fun methodFixture(
+    hirId: Int = 1,
+    annotations: MutableList<HIRAnnotation> = mutableListOf(),
+    parameters: List<HIRParameter> = emptyList(),
+    returnType: HIRType = HIRPrimitiveType(PrimitiveKind.VOID),
+    body: List<HIRStatement> = emptyList(),
+    name: String = "foo",
+    isStatic: Boolean) : HIRMethod {
+
+    return HIRMethod(
+        hirId,
+        annotations,
+        parameters,
+        returnType,
+        body,
+        name,
+        isStatic)
+}
+
+
+fun functionFixture(
+    hirId: Int = 1,
+    annotations: MutableList<HIRAnnotation> = mutableListOf(),
+    parameters: List<HIRParameter> = emptyList(),
+    returnType: HIRType = HIRPrimitiveType(PrimitiveKind.VOID),
+    body: List<HIRStatement> = emptyList(),
+    name: String = "foo",
+    capturedVariables: List<HIRCapturedVariable> = listOf()) : HIRFunction {
+
+    return HIRFunction(
+        hirId,
+        annotations,
+        parameters,
+        returnType,
+        body,
+        name,
+        capturedVariables)
 }
