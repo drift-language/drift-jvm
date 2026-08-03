@@ -31,10 +31,10 @@ object TempValues {
     const val visibility = Opcodes.ACC_PUBLIC
 
     /**
-     * Signature contains information about generic types if any.
+     * Signature contains information about generic types, if any.
      * For now, it is not supported, so the variable is set to `null`.
      */
-    val signature = null
+    val signature: String? = null
 
     /**
      * Exception throwing is not supported yet.

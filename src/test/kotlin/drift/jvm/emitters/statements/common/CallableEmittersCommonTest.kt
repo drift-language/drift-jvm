@@ -8,9 +8,7 @@
  ******************************************************************************/
 package drift.jvm.emitters.statements.common
 
-import drift.hir.HIRParameter
 import drift.hir.HIRPrimitiveType
-import drift.hir.HIRType
 import drift.hir.PrimitiveKind
 import drift.jvm.emitters.managers.SlotsManager
 import drift.jvm.emitters.managers.SlotsManager.Companion.DOUBLE_WIDTH
