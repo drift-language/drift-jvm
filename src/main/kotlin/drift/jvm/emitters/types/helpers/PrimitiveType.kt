@@ -32,7 +32,7 @@ enum class PrimitiveType(
     INT(PrimitiveKind.INT, "I"),
     UINT(PrimitiveKind.UINT, "I"),
 
-    LONG(PrimitiveKind.INT64, "L"),
+    LONG(PrimitiveKind.INT64, "J"),
 
     BOOLEAN(PrimitiveKind.BOOL, "Z"),
 
@@ -71,6 +71,7 @@ enum class PrimitiveType(
             when (asmType) {
                 "V"             -> VOID
                 "I"             -> INT
+                "J"             -> LONG
                 "Z"             -> BOOLEAN
                 stringAsmType   -> STRING
                 objectAsmType   -> error("'$objectAsmType' is ambiguous to be translated to a HIR primitive type.")
