@@ -13,12 +13,12 @@ package drift.jvm.emitters.statements
 import drift.hir.HIRMethod
 import drift.jvm.emitters.EmitContext
 import drift.jvm.emitters.SinkEmitter
+import drift.jvm.emitters.TempValues
 import drift.jvm.emitters.managers.NodesManager
 import drift.jvm.emitters.managers.SlotsManager
-import drift.jvm.emitters.TempValues
 import drift.jvm.emitters.opcodes.OpcodesPlus.ACC_NOT_STATIC
-import drift.jvm.emitters.statements.common.emitCallableBody
 import drift.jvm.emitters.statements.common.allocateCallableParameterSlots
+import drift.jvm.emitters.statements.common.emitCallableBody
 import drift.jvm.emitters.sugar.then
 import drift.jvm.emitters.types.helpers.TypeConverter.formatTypes
 import language.Namespace

@@ -38,7 +38,14 @@ class FunctionEmitter(
 
     override fun emit(node: HIRFunction) {
         val access = TempValues.visibility then ACC_STATIC
-        // NOTE: functions are
+        // NOTE: functions are always declared as static members of the current
+        //  [synthetic] class. Nested ones names are prefixed by the parents
+        //  names.
+        // NOTE: at this moment, Drift does not support visibilities. All
+        //  structures are implicitly PUBLIC, including functions. Nested ones
+        //  must still public, as their accessibility is defined by the scope
+        //  hierarchy. Top-level ones should, later, implement visibilities as
+        //  they are directly accessible outside the file.
 
         val inputTypes = node
             .parameters
