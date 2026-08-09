@@ -11,6 +11,7 @@
 package drift.jvm.emitters.managers
 
 import drift.hir.HIRNode
+import drift.hir.HirId
 
 
 /**
@@ -20,4 +21,4 @@ import drift.hir.HIRNode
  * @author Jonathan (GitHub: belicfr)
  */
 data class NodesManager(
-    val nodesByDefinition: MutableMap<Int, HIRNode> = mutableMapOf())
+    val nodesByDefinition: MutableMap<HirId, HIRNode> = mutableMapOf())

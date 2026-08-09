@@ -10,6 +10,8 @@
 
 package drift.jvm.emitters.managers
 
+import drift.hir.HirId
+
 
 /**
  * TODO DOC
@@ -28,16 +30,16 @@ class SlotsManager {
     var slotIndex = 0
         private set
 
-    private val hirIdToSlotIndex = mutableMapOf<Int, SlotAllocation>()
+    private val hirIdToSlotIndex = mutableMapOf<HirId, SlotAllocation>()
 
 
-    fun getSlotAllocation(hirId: Int) : SlotAllocation? = hirIdToSlotIndex[hirId]
+    fun getSlotAllocation(hirId: HirId) : SlotAllocation? = hirIdToSlotIndex[hirId]
 
-    fun allocateOneAndLink(hirId: Int) : SlotAllocation = allocateAndLink(hirId, SIMPLE_WIDTH)
+    fun allocateOneAndLink(hirId: HirId) : SlotAllocation = allocateAndLink(hirId, SIMPLE_WIDTH)
 
-    fun allocateTwoAndLink(hirId: Int) : SlotAllocation = allocateAndLink(hirId, DOUBLE_WIDTH)
+    fun allocateTwoAndLink(hirId: HirId) : SlotAllocation = allocateAndLink(hirId, DOUBLE_WIDTH)
 
-    fun allocateAndLink(hirId: Int, width: Int) : SlotAllocation {
+    fun allocateAndLink(hirId: HirId, width: Int) : SlotAllocation {
         val allocation = allocate(width)
         hirIdToSlotIndex[hirId] = allocation
 

@@ -127,7 +127,7 @@ class CallEmitter(
          * @param defHirId The definition HIR ID of the function to retrieve.
          * @return The [HIRFunction] object.
          */
-        fun getMethodFromContextOrThrow(defHirId: Int) : HIRFunction {
+        fun getMethodFromContextOrThrow(defHirId: HirId) : HIRFunction {
             return (context
                 .nodesManager
                 .nodesByDefinition[defHirId]

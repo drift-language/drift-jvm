@@ -15,6 +15,7 @@ import drift.hir.HIRParameter
 import drift.hir.HIRPrimitiveType
 import drift.hir.HIRStatement
 import drift.hir.HIRType
+import drift.hir.HirId
 import drift.hir.PrimitiveKind
 import drift.hir.metadata.HIRAnnotation
 
@@ -28,7 +29,7 @@ object HIRParameterUtils {
      *
      * @return A new instance of [HIRParameter] with the provided type.
      */
-    fun createWithType(hirId: Int, type: HIRType) : HIRParameter {
+    fun createWithType(hirId: HirId, type: HIRType) : HIRParameter {
         return HIRParameter(
             hirId,
             name = "foo",
@@ -38,7 +39,7 @@ object HIRParameterUtils {
 
 
 fun parameterFixture(
-    hirId: Int = 1,
+    hirId: HirId = HirId(1),
     name: String = "foo",
     type: HIRType = HIRPrimitiveType(PrimitiveKind.INT)) : HIRParameter {
 
@@ -47,7 +48,7 @@ fun parameterFixture(
 
 
 fun methodFixture(
-    hirId: Int = 1,
+    hirId: HirId = HirId(1),
     annotations: MutableList<HIRAnnotation> = mutableListOf(),
     parameters: List<HIRParameter> = emptyList(),
     returnType: HIRType = HIRPrimitiveType(PrimitiveKind.VOID),
@@ -67,7 +68,7 @@ fun methodFixture(
 
 
 fun functionFixture(
-    hirId: Int = 1,
+    hirId: HirId = HirId(1),
     annotations: MutableList<HIRAnnotation> = mutableListOf(),
     parameters: List<HIRParameter> = emptyList(),
     returnType: HIRType = HIRPrimitiveType(PrimitiveKind.VOID),

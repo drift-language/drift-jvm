@@ -10,6 +10,7 @@
 
 package drift.jvm.emitters.conventions.helpers
 
+import drift.hir.HirId
 import language.LangInfo.NAMESPACE_SEPARATOR
 import language.Namespace
 
@@ -29,6 +30,6 @@ object NamingHelper {
      *
      * @return Internal class name string
      */
-    fun formatClassName(namespace: Namespace, hirId: Int, name: String) =
+    fun formatClassName(namespace: Namespace, hirId: HirId, name: String) =
         "$namespace$NAMESPACE_SEPARATOR$$hirId$$name"
 }
