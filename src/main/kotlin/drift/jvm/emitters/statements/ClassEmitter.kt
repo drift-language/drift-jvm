@@ -38,6 +38,8 @@ class ClassEmitter(
             methods = node.methods,
             staticMethods = node.staticMethods)
 
+        validateClassContext(node)
+
         val className = (namespace + node.name).getNamespace()
         val classWriter = ClassGenerator(namespace, nodesManager)
             .generate(className, members)
@@ -48,4 +50,24 @@ class ClassEmitter(
 
         return classWriter.toByteArray()
     }
+
+    /**
+     * Validates the provided class node by passing it through the required
+     * rules.
+     *
+     * @throws IllegalStateException if the validation fails.
+     *
+     * TODO DOC: replace [IllegalStateException] with dedicated exceptions.
+     */
+    private fun validateClassContext(node: HIRClass) {
+        if (!isClassNameValid(node.name))
+            error("A class name cannot start with '$'.")
+    }
+
+    /**
+     * @return `true` if the provided class name is valid regarding the naming
+     *         rules for classes.
+     */
+    private fun isClassNameValid(name: String) : Boolean =
+        !name.contains('$')
 }
