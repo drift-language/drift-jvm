@@ -21,5 +21,5 @@ import language.Namespace
 object ClassHelper {
 
     fun getSyntheticClassName(namespace: Namespace) =
-        "$${namespace.getSimpleName()}"
+        "$${namespace.last()}"
 }
