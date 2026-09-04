@@ -15,7 +15,9 @@ import drift.hir.HIRStatement
 import drift.jvm.emitters.managers.NodesManager
 import drift.jvm.emitters.specials.SyntheticClassEmitter
 import drift.jvm.emitters.statements.ClassEmitter
+import language.ModuleReference
 import language.Namespace
+import language.QualifiedName
 import java.io.File
 
 
@@ -45,13 +47,16 @@ class BackendBootstrap(
     private fun handleClass(hirClass: HIRClass) {
         val byteArray = ClassEmitter(namespace, nodesManager)
             .emit(hirClass)
+        // NOTE: as a class can only be defined in a Drift file, generating a
+        //  synthetic class itself, we need to use the namespace's parent one
+        //  to avoid using the parent class name.
 
-        output.mkdirs()
+        with (output.resolve(namespace.toPath())) {
+            mkdirs()
 
-        val outputFile = output
-            .resolve("${hirClass.name}.class")
-
-        outputFile.writeBytes(byteArray)
+            val outputFile = resolve("${hirClass.name}.class")
+            outputFile.writeBytes(byteArray)
+        }
 
         println("[BACKEND] [CLASS=${hirClass.name}] Class generation succeeded. " +
                 "Emit bytecode length = ${byteArray.contentToString()}.")
@@ -60,15 +65,16 @@ class BackendBootstrap(
     private fun handleTopLevelStatements() {
         val byteArray = SyntheticClassEmitter(namespace, nodesManager)
             .emit(topLevelStatements)
+        val syntheticClassQualifiedName = QualifiedName(module = ModuleReference.unresolved, namespace = namespace)
+
+        with (output) {
+            mkdirs()
+
+            val outputFile = resolve("$${syntheticClassQualifiedName.simpleName}.class")
+            outputFile.writeBytes(byteArray)
+        }
 
         println("[BACKEND] Top level statements generation succeeded. " +
                 "Synthetic class length = ${byteArray.contentToString()}.")
-
-        output.mkdirs()
-
-        val outputFile = output
-            .resolve("$${namespace.getSimpleName()}.class")
-
-        outputFile.writeBytes(byteArray)
     }
 }
