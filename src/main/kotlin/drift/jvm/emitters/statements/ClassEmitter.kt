@@ -61,7 +61,7 @@ class ClassEmitter(
      */
     private fun validateClassContext(node: HIRClass) {
         if (!isClassNameValid(node.name))
-            error("A class name cannot start with '$'.")
+            error("Invalid class name '${node.name}': a class name cannot contain '$'.")
     }
 
     /**
