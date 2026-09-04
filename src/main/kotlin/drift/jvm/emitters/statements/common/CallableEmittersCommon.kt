@@ -52,7 +52,11 @@ fun allocateCallableParameterSlots(
  *                  body statements.
  * @param body AST composed by the callable body's statements.
  */
-fun emitCallableBody(namespace: Namespace, emitContext: EmitContext, body: List<HIRStatement>) {
+fun emitCallableBody(
+    namespace: Namespace,
+    emitContext: EmitContext,
+    body: List<HIRStatement>) {
+
     with(emitContext.methodVisitor) {
         visitCode()
 
