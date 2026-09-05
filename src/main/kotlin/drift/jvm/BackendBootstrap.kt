@@ -36,12 +36,22 @@ class BackendBootstrap(
 
 
     fun boot(hir: List<HIRStatement>) {
+        clearDist()
+
         for (node in hir) {
             if (node is HIRClass) handleClass(node)
             else topLevelStatements += node
         }
 
         handleTopLevelStatements()
+    }
+
+    private fun clearDist() {
+        if (output.exists()) {
+            assert(output.deleteRecursively())
+        }
+
+        output.mkdirs()
     }
 
     private fun handleClass(hirClass: HIRClass) {
